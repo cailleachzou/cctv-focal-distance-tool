@@ -210,49 +210,6 @@
     border: 1px solid var(--border);
   }
 
-  .diagram-stats {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1px;
-    margin-top: 16px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-  .stat {
-    background: var(--surface);
-    padding: 14px 16px;
-  }
-  .stat-label {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 10px;
-    color: var(--text-3);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .stat-value {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 24px;
-    font-weight: 500;
-    margin-top: 4px;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -.5px;
-  }
-  .stat-unit {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 11px;
-    color: var(--text-3);
-    margin-left: 4px;
-    font-weight: 400;
-  }
-  .stat.blind .stat-value { color: var(--I); }
-  .stat.I .stat-value { color: var(--I); }
-  .stat.R .stat-value { color: var(--R); }
-  .stat.O .stat-value { color: var(--O); }
-  .stat.D .stat-value { color: var(--D); }
-
   /* ===== DORI 维度详解 ===== */
   .dori-explainer {
     margin-top: 28px;
@@ -627,7 +584,6 @@
     .header-title { font-size: 28px; }
     .filters { flex-direction: column; align-items: stretch; gap: 12px; }
     .compare-grid { grid-template-columns: 1fr; }
-    .diagram-stats { grid-template-columns: repeat(2, 1fr); }
     .tabs { overflow-x: auto; }
   }
 </style>
@@ -698,7 +654,6 @@
         </div>
       </div>
       <svg id="diagram" viewBox="0 0 900 160" preserveAspectRatio="xMidYMid meet"></svg>
-      <div class="diagram-stats" id="diagram-stats"></div>
     </div>
 
     <!-- ===== DORI 维度详解 ===== -->
@@ -1179,20 +1134,6 @@
 
     $('#diagram').innerHTML = svg;
 
-    // Stats
-    const stats = [
-      { cls: 'blind', label: '盲区', val: fmt(blindDist), unit: 'm' },
-      { cls: 'I', label: 'I · 辨识 (250px/m)', val: fmtInt(r.I), unit: 'm' },
-      { cls: 'R', label: 'R · 识别 (125px/m)', val: fmtInt(r.R), unit: 'm' },
-      { cls: 'O', label: 'O · 观察 (62px/m)', val: fmtInt(r.O), unit: 'm' },
-      { cls: 'D', label: 'D · 探测 (25px/m)', val: fmtInt(r.D), unit: 'm' }
-    ];
-    $('#diagram-stats').innerHTML = stats.map(s =>
-      `<div class="stat ${s.cls}">
-        <div class="stat-label">${s.label}</div>
-        <div class="stat-value">${s.val}<span class="stat-unit">${s.unit}</span></div>
-      </div>`
-    ).join('');
   }
 
   // Diagram controls
