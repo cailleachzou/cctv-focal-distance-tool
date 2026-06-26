@@ -253,6 +253,145 @@
   .stat.O .stat-value { color: var(--O); }
   .stat.D .stat-value { color: var(--D); }
 
+  /* ===== DORI 维度详解 ===== */
+  .dori-explainer {
+    margin-top: 28px;
+    padding: 22px 24px 26px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .dori-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dori-head-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .dori-head-sub {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .dori-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .dori-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-top-width: 3px;
+    padding: 16px 16px 18px;
+    position: relative;
+  }
+  .dori-card.D { border-top-color: var(--D); }
+  .dori-card.O { border-top-color: var(--O); }
+  .dori-card.R { border-top-color: var(--R); border-color: var(--border); border-top-color: var(--R); }
+  .dori-card.I { border-top-color: var(--I); }
+  .dori-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dori-letter {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .dori-card.D .dori-letter { color: var(--D); }
+  .dori-card.O .dori-letter { color: var(--O); }
+  .dori-card.R .dori-letter { color: var(--R); }
+  .dori-card.I .dori-letter { color: var(--I); }
+  .dori-name {
+    font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 2px;
+  }
+  .dori-en {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .dori-px {
+    text-align: right;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .dori-px-num {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .dori-px-unit {
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+  .dori-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .dori-row-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 1px;
+    width: 38px;
+  }
+  .dori-row-text {
+    color: var(--text);
+    flex: 1;
+  }
+  .dori-row.example .dori-row-text {
+    color: var(--text-2);
+    font-style: normal;
+  }
+  .dori-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--text-3);
+    letter-spacing: .3px;
+  }
+  .dori-foot b { color: var(--text); font-weight: 600; margin-right: 4px; }
+  @media (max-width: 900px) {
+    .dori-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 540px) {
+    .dori-grid { grid-template-columns: 1fr; }
+  }
+
   /* ===== Data Table ===== */
   .filters {
     display: flex;
@@ -560,6 +699,123 @@
       </div>
       <svg id="diagram" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="diagram-stats" id="diagram-stats"></div>
+    </div>
+
+    <!-- ===== DORI 维度详解 ===== -->
+    <div class="dori-explainer">
+      <div class="dori-head">
+        <span class="dori-head-title">DORI 四维详解</span>
+        <span class="dori-head-sub">IEC 62676-4 · 像素密度判据</span>
+      </div>
+      <div class="dori-grid">
+        <div class="dori-card D">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">D</div>
+              <div class="dori-name">探测</div>
+              <div class="dori-en">Detection</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">25</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">画面里有东西在动</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">周界入侵 · 车辆出入 · 人数统计</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能看出"有人走过"或"有车开进来"，但分不清男女老少、什么车型</span>
+          </div>
+        </div>
+
+        <div class="dori-card O">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">O</div>
+              <div class="dori-name">观察</div>
+              <div class="dori-en">Observation</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">62</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">行为、姿态、衣着颜色</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">行为分析 · 跌倒检测 · 客流统计</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能看出"老人摔倒在走廊"或"有人在推购物车"，但认不出脸</span>
+          </div>
+        </div>
+
+        <div class="dori-card R">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">R</div>
+              <div class="dori-name">识别</div>
+              <div class="dori-en">Recognition</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">125</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">人脸特征 · 衣着细节 · 清晰车牌</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">人脸抓拍 · 辅助车牌识别 · 陌生人预警</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能认出"这是熟人张三"或清晰读出车牌号，可作事后追溯证据</span>
+          </div>
+        </div>
+
+        <div class="dori-card I">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">I</div>
+              <div class="dori-name">辨识</div>
+              <div class="dori-en">Identification</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">250</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">可用于入库比对的细节</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">人脸识别门禁 · 刑事取证 · 身份核验</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">人脸特征可入库识别系统比对、可信度高；相当于身份证照片的清晰度</span>
+          </div>
+        </div>
+      </div>
+      <div class="dori-foot">
+        <span><b>记忆口诀</b>「D 有人 · O 在干啥 · R 是谁 · I 系统能认」</span>
+        <span><b>选型提示</b>人脸识别门禁取 I · 一般出入口取证取 R · 周界报警取 D · 行为分析取 O</span>
+      </div>
     </div>
   </section>
 
