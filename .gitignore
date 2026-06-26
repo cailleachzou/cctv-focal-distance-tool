@@ -1,0 +1,23 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS temp
+$RECYCLE.BIN/
+
+# Build / dist (none for this project, but future-proof)
+dist/
+build/
+*.log
+
+# Validation scripts (transient)
+_validate.js
