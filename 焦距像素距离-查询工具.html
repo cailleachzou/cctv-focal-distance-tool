@@ -1025,9 +1025,9 @@
     const r = DATA.find(x => String(x.focal) === state.diagramFocal && x.pixel === state.diagramPixel);
     if (!r) return;
 
-    const W = 900, H = 460;
+    const W = 900, H = 160;
     const maxDist = state.diagramScale;
-    const margin = { left: 80, right: 30, top: 36, bottom: 56 };
+    const margin = { left: 70, right: 20, top: 18, bottom: 24 };
     const drawW = W - margin.left - margin.right;
     const drawH = H - margin.top - margin.bottom;
     const camHeight = state.diagramHeight;
@@ -1057,8 +1057,8 @@
 
     // Subtle grid
     svg += `<defs>
-      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#11161c" stroke-width="1"/>
+      <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#11161c" stroke-width="0.5"/>
       </pattern>
     </defs>`;
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${drawW}" height="${drawH}" fill="url(#grid)"/>`;
@@ -1084,10 +1084,10 @@
 
     // Horizon line (at camera height)
     svg += `<line x1="${camX}" y1="${camYM}" x2="${margin.left + drawW}" y2="${camYM}" stroke="#2e3845" stroke-width="1" stroke-dasharray="4,4"/>`;
-    svg += `<text x="${margin.left + drawW - 6}" y="${camYM - 5}" fill="#4f5864" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平线</text>`;
+    svg += `<text x="${margin.left + drawW - 6}" y="${camYM - 2}" fill="#4f5864" font-size="8" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平线</text>`;
 
     // FOV cone edges
-    const edgeLen = 220;
+    const edgeLen = 75;
     const bX = camX + edgeLen * Math.cos(bottomAngle);
     const bY = camYM + edgeLen * Math.sin(bottomAngle);
     const tX = camX + edgeLen * Math.cos(topAngle);
@@ -1135,7 +1135,7 @@
     const cY = camYM + edgeLen * Math.sin(tiltRad);
     svg += `<line x1="${camX}" y1="${camYM}" x2="${cX}" y2="${cY}" stroke="#00d4ff" stroke-width="1.5"/>`;
     // Tilt angle arc
-    const arcR = 32;
+    const arcR = 12;
     const aS = camX + arcR;
     const aSY = camYM;
     const aE = camX + arcR * Math.cos(tiltRad);
@@ -1152,14 +1152,14 @@
     ];
     doriMarkers.forEach((m, idx) => {
       if (m.dist > maxDist) {
-        svg += `<text x="${margin.left + drawW - 6}" y="${groundY - 80 - idx * 13}" fill="${m.color}" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">${m.name} ${fmtInt(m.dist)}m · 超出视图</text>`;
+        svg += `<text x="${margin.left + drawW - 6}" y="${groundY - 30 - idx * 9}" fill="${m.color}" font-size="8" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">${m.name} ${fmtInt(m.dist)}m · 超出视图</text>`;
         return;
       }
       const x = camX + m.dist * unit;
       if (x > blindX) {
-        svg += `<line x1="${x}" y1="${groundY}" x2="${x}" y2="${groundY - 22}" stroke="${m.color}" stroke-width="1.5"/>`;
-        svg += `<circle cx="${x}" cy="${groundY}" r="3.5" fill="${m.color}"/>`;
-        svg += `<text x="${x}" y="${groundY + 33}" fill="${m.color}" font-size="10.5" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${m.name}·${fmtInt(m.dist)}</text>`;
+        svg += `<line x1="${x}" y1="${groundY}" x2="${x}" y2="${groundY - 9}" stroke="${m.color}" stroke-width="1.2"/>`;
+        svg += `<circle cx="${x}" cy="${groundY}" r="2.5" fill="${m.color}"/>`;
+        svg += `<text x="${x}" y="${groundY + 13}" fill="${m.color}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${m.name}·${fmtInt(m.dist)}</text>`;
       }
     });
 
@@ -1171,11 +1171,11 @@
     svg += `<line x1="${camX - 6}" y1="${camYM}" x2="${camX - 22}" y2="${camYM}" stroke="#4f5864" stroke-width="1"/>`;
     svg += `<line x1="${camX - 6}" y1="${groundY}" x2="${camX - 22}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
     svg += `<line x1="${camX - 18}" y1="${camYM}" x2="${camX - 18}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
-    svg += `<text x="${camX - 24}" y="${(camYM + groundY) / 2 + 4}" fill="#8a949e" font-size="10" text-anchor="end" font-family="IBM Plex Mono">${fmt(camHeight)}m</text>`;
+    svg += `<text x="${camX - 24}" y="${(camYM + groundY) / 2 + 3}" fill="#8a949e" font-size="9" text-anchor="end" font-family="IBM Plex Mono">${fmt(camHeight)}m</text>`;
 
     // Title in top-left
-    svg += `<text x="${margin.left + 6}" y="${margin.top - 14}" fill="#e8ecef" font-size="12" font-weight="600" font-family="IBM Plex Sans Condensed" letter-spacing="2">${r.focal}MM @ ${r.pixel}</text>`;
-    svg += `<text x="${margin.left + drawW - 6}" y="${margin.top - 14}" fill="#8a949e" font-size="10" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平 ${fmt(r.hFov)}° · 垂直 ${fmt(r.vFov)}°</text>`;
+    svg += `<text x="${margin.left + 6}" y="${margin.top - 6}" fill="#e8ecef" font-size="11" font-weight="600" font-family="IBM Plex Sans Condensed" letter-spacing="2">${r.focal}MM @ ${r.pixel}</text>`;
+    svg += `<text x="${margin.left + drawW - 6}" y="${margin.top - 6}" fill="#8a949e" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平 ${fmt(r.hFov)}° · 垂直 ${fmt(r.vFov)}°</text>`;
 
     $('#diagram').innerHTML = svg;
 
