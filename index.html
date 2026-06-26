@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>焦距 × 像素 × 距离 — 选型参考</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d11;
+    --bg-grid: #0e1218;
+    --surface: #11161c;
+    --surface-2: #161d25;
+    --surface-3: #1c242e;
+    --border: #232c37;
+    --border-strong: #2e3845;
+    --text: #e8ecef;
+    --text-2: #8a949e;
+    --text-3: #4f5864;
+    --primary: #00d4ff;
+    --primary-dim: #008cb3;
+    --primary-glow: rgba(0, 212, 255, .12);
+    --D: #00d68f;
+    --O: #ffb800;
+    --R: #ff7a00;
+    --I: #ff3d57;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    background-image:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-attachment: fixed;
+  }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 32px 28px 48px; }
+
+  /* ===== Header ===== */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .header-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -.5px;
+    color: var(--text);
+  }
+  .header-title .x {
+    color: var(--primary);
+    margin: 0 .15em;
+    font-weight: 500;
+  }
+  .header-sub {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .header-meta {
+    text-align: right;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--text-2);
+    line-height: 1.7;
+    letter-spacing: .5px;
+  }
+  .header-meta .k { color: var(--text-3); }
+  .header-meta .v { color: var(--primary); margin-left: 4px; }
+
+  /* ===== Tabs ===== */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    padding: 14px 22px;
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .12s, border-color .12s;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--text-2); }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .tab .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    margin-right: 8px;
+    letter-spacing: 0;
+  }
+  .tab.active .num { color: var(--primary); opacity: .6; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== Section header ===== */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .section-num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+  }
+  .section-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-meta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ===== Diagram ===== */
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  .diagram-controls {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .ctrl-group { display: flex; align-items: center; gap: 10px; }
+  .ctrl-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  select, input[type="number"] {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    padding: 7px 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select { padding-right: 28px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-2) 50%), linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 10px) 50%;
+    background-size: 4px 4px, 4px 4px;
+    background-repeat: no-repeat;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--primary); }
+
+  svg#diagram {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #06090d;
+    border: 1px solid var(--border);
+  }
+
+  .diagram-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    margin-top: 16px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .stat {
+    background: var(--surface);
+    padding: 14px 16px;
+  }
+  .stat-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-value {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.5px;
+  }
+  .stat-unit {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .stat.blind .stat-value { color: var(--I); }
+  .stat.I .stat-value { color: var(--I); }
+  .stat.R .stat-value { color: var(--R); }
+  .stat.O .stat-value { color: var(--O); }
+  .stat.D .stat-value { color: var(--D); }
+
+  /* ===== DORI 维度详解 ===== */
+  .dori-explainer {
+    margin-top: 28px;
+    padding: 22px 24px 26px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .dori-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dori-head-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .dori-head-sub {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .dori-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .dori-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-top-width: 3px;
+    padding: 16px 16px 18px;
+    position: relative;
+  }
+  .dori-card.D { border-top-color: var(--D); }
+  .dori-card.O { border-top-color: var(--O); }
+  .dori-card.R { border-top-color: var(--R); border-color: var(--border); border-top-color: var(--R); }
+  .dori-card.I { border-top-color: var(--I); }
+  .dori-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dori-letter {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .dori-card.D .dori-letter { color: var(--D); }
+  .dori-card.O .dori-letter { color: var(--O); }
+  .dori-card.R .dori-letter { color: var(--R); }
+  .dori-card.I .dori-letter { color: var(--I); }
+  .dori-name {
+    font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 2px;
+  }
+  .dori-en {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .dori-px {
+    text-align: right;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .dori-px-num {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .dori-px-unit {
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+  .dori-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .dori-row-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    color: var(--text-3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 1px;
+    width: 38px;
+  }
+  .dori-row-text {
+    color: var(--text);
+    flex: 1;
+  }
+  .dori-row.example .dori-row-text {
+    color: var(--text-2);
+    font-style: normal;
+  }
+  .dori-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--text-3);
+    letter-spacing: .3px;
+  }
+  .dori-foot b { color: var(--text); font-weight: 600; margin-right: 4px; }
+  @media (max-width: 900px) {
+    .dori-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 540px) {
+    .dori-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== Data Table ===== */
+  .filters {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    align-items: center;
+  }
+  .filter-group { display: flex; align-items: center; gap: 14px; }
+  .filter-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .chips { display: flex; gap: 6px; }
+  .chip {
+    padding: 5px 12px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-2);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: .5px;
+    transition: color .1s, border-color .1s, background .1s;
+  }
+  .chip:hover { color: var(--text); border-color: var(--text-3); }
+  .chip.active {
+    color: var(--bg);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-3);
+    padding: 5px 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .reset-btn:hover { color: var(--primary); border-color: var(--primary); }
+
+  .auto-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+  .auto-btn.manual {
+    border-color: var(--O);
+    color: var(--O);
+  }
+  .auto-btn:hover { background: var(--primary-glow); }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td {
+    text-align: right;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+  }
+  th:first-child, td:first-child,
+  th:nth-child(2), td:nth-child(2),
+  th:last-child, td:last-child { text-align: left; font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif; }
+  th {
+    background: var(--surface-2);
+    color: var(--text-3);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 12px 14px;
+  }
+  th .dori-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  tbody tr:hover { background: var(--surface-2); }
+  tbody tr.highlight {
+    background: var(--primary-glow);
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+  .warn { color: var(--O); }
+  .scenario-cell { color: var(--text-2); font-size: 12px; }
+
+  /* ===== Compare ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    margin-bottom: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .compare-col {
+    background: var(--surface);
+    padding: 20px;
+  }
+  .compare-col-head {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+  }
+  .compare-col-head .marker {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .compare-col .row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .compare-col .row label { color: var(--text-3); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; min-width: 60px; font-family: "IBM Plex Mono", monospace; }
+  .compare-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .compare-result th, .compare-result td { font-size: 12px; padding: 10px 14px; }
+  .compare-result th { font-size: 10px; }
+  .compare-result td:first-child { color: var(--text-2); font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif; font-size: 12px; }
+  .delta-pos { color: var(--D); }
+  .delta-neg { color: var(--I); }
+  .delta-zero { color: var(--text-3); }
+
+  /* ===== Scenarios ===== */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .scenario-card {
+    background: var(--surface);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: background .12s;
+    position: relative;
+  }
+  .scenario-card:hover { background: var(--surface-2); }
+  .scenario-card:hover::after {
+    content: "→";
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    color: var(--primary);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14px;
+  }
+  .sc-num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+  }
+  .sc-title {
+    font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 6px 0 12px;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .sc-config {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 18px;
+    color: var(--primary);
+    margin-bottom: 12px;
+    letter-spacing: -.5px;
+  }
+  .sc-meta {
+    display: flex;
+    gap: 16px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .sc-meta .k { color: var(--text-3); margin-right: 4px; }
+  .sc-note {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer .dot { color: var(--text-3); margin: 0 8px; }
+
+  @media (max-width: 900px) {
+    .container { padding: 20px 16px; }
+    .header-title { font-size: 28px; }
+    .filters { flex-direction: column; align-items: stretch; gap: 12px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-stats { grid-template-columns: repeat(2, 1fr); }
+    .tabs { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div>
+      <div class="header-title">焦距<span class="x">×</span>像素<span class="x">×</span>距离</div>
+      <div class="header-sub">摄像机选型参考 · 焦距 / 像素 / 距离</div>
+    </div>
+    <div class="header-meta">
+      <div><span class="k">传感器</span><span class="v">1/2.8"</span></div>
+      <div><span class="k">安装高</span><span class="v">2.8m</span></div>
+      <div><span class="k">标准</span><span class="v">IEC 62676-4</span></div>
+      <div><span class="k">版本</span><span class="v">1.0</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="diagram"><span class="num">01</span>视场角分析</button>
+    <button class="tab" data-tab="scenario"><span class="num">02</span>部署模板</button>
+    <button class="tab" data-tab="table"><span class="num">03</span>数据矩阵</button>
+    <button class="tab" data-tab="compare"><span class="num">04</span>并排对比</button>
+  </nav>
+
+  <!-- ============ Tab 1: 视场角分析 ============ -->
+  <section id="tab-diagram" class="tab-content active">
+    <div class="section-head">
+      <span class="section-num">// 01</span>
+      <span class="section-title">视场角分析</span>
+      <span class="section-rule"></span>
+      <span class="section-meta">侧视图 · 高度 / 俯角可调</span>
+    </div>
+    <div class="diagram-wrap">
+      <div class="diagram-controls">
+        <div class="ctrl-group">
+          <span class="ctrl-label">焦距</span>
+          <select id="diagram-focal">
+            <option value="2.8">2.8mm</option>
+            <option value="4" selected>4mm</option>
+            <option value="6">6mm</option>
+            <option value="8">8mm</option>
+            <option value="12">12mm</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">像素</span>
+          <select id="diagram-pixel">
+            <option value="2MP">2MP</option>
+            <option value="4MP" selected>4MP</option>
+            <option value="8MP">8MP</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">显示距离 (m)</span>
+          <input type="number" id="diagram-scale" value="30" min="5" max="150" step="5" style="width: 90px;">
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">高度 (m)</span>
+          <input type="number" id="diagram-height" value="2.8" min="0.5" max="10" step="0.1" style="width: 70px;">
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">俯角 (°)</span>
+          <input type="number" id="diagram-tilt" min="0" max="80" step="0.5" style="width: 70px;">
+          <button class="auto-btn" id="tilt-auto" title="重置为按焦距推荐值">AUTO</button>
+        </div>
+      </div>
+      <svg id="diagram" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="diagram-stats" id="diagram-stats"></div>
+    </div>
+
+    <!-- ===== DORI 维度详解 ===== -->
+    <div class="dori-explainer">
+      <div class="dori-head">
+        <span class="dori-head-title">DORI 四维详解</span>
+        <span class="dori-head-sub">IEC 62676-4 · 像素密度判据</span>
+      </div>
+      <div class="dori-grid">
+        <div class="dori-card D">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">D</div>
+              <div class="dori-name">探测</div>
+              <div class="dori-en">Detection</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">25</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">画面里有东西在动</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">周界入侵 · 车辆出入 · 人数统计</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能看出"有人走过"或"有车开进来"，但分不清男女老少、什么车型</span>
+          </div>
+        </div>
+
+        <div class="dori-card O">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">O</div>
+              <div class="dori-name">观察</div>
+              <div class="dori-en">Observation</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">62</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">行为、姿态、衣着颜色</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">行为分析 · 跌倒检测 · 客流统计</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能看出"老人摔倒在走廊"或"有人在推购物车"，但认不出脸</span>
+          </div>
+        </div>
+
+        <div class="dori-card R">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">R</div>
+              <div class="dori-name">识别</div>
+              <div class="dori-en">Recognition</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">125</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">人脸特征 · 衣着细节 · 清晰车牌</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">人脸抓拍 · 辅助车牌识别 · 陌生人预警</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">能认出"这是熟人张三"或清晰读出车牌号，可作事后追溯证据</span>
+          </div>
+        </div>
+
+        <div class="dori-card I">
+          <div class="dori-card-head">
+            <div>
+              <div class="dori-letter">I</div>
+              <div class="dori-name">辨识</div>
+              <div class="dori-en">Identification</div>
+            </div>
+            <div class="dori-px">
+              <div class="dori-px-num">250</div>
+              <div class="dori-px-unit">PX / M</div>
+            </div>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">看到</span>
+            <span class="dori-row-text">可用于入库比对的细节</span>
+          </div>
+          <div class="dori-row">
+            <span class="dori-row-label">典型</span>
+            <span class="dori-row-text">人脸识别门禁 · 刑事取证 · 身份核验</span>
+          </div>
+          <div class="dori-row example">
+            <span class="dori-row-label">场景</span>
+            <span class="dori-row-text">人脸特征可入库识别系统比对、可信度高；相当于身份证照片的清晰度</span>
+          </div>
+        </div>
+      </div>
+      <div class="dori-foot">
+        <span><b>记忆口诀</b>「D 有人 · O 在干啥 · R 是谁 · I 系统能认」</span>
+        <span><b>选型提示</b>人脸识别门禁取 I · 一般出入口取证取 R · 周界报警取 D · 行为分析取 O</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Tab 2: 部署模板 ============ -->
+  <section id="tab-scenario" class="tab-content">
+    <div class="section-head">
+      <span class="section-num">// 02</span>
+      <span class="section-title">部署模板</span>
+      <span class="section-rule"></span>
+      <span class="section-meta">7 个预设 · 点击加载</span>
+    </div>
+    <div class="scenario-grid" id="scenario-grid"></div>
+  </section>
+
+  <!-- ============ Tab 3: 数据矩阵 ============ -->
+  <section id="tab-table" class="tab-content">
+    <div class="section-head">
+      <span class="section-num">// 03</span>
+      <span class="section-title">完整数据矩阵</span>
+      <span class="section-rule"></span>
+      <span class="section-meta">15 条数据 · 5×3</span>
+    </div>
+    <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">焦距</span>
+        <div class="chips" id="filter-focal">
+          <span class="chip" data-value="2.8">2.8</span>
+          <span class="chip" data-value="4">4</span>
+          <span class="chip" data-value="6">6</span>
+          <span class="chip" data-value="8">8</span>
+          <span class="chip" data-value="12">12</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">像素</span>
+        <div class="chips" id="filter-pixel">
+          <span class="chip" data-value="2MP">2MP</span>
+          <span class="chip" data-value="4MP">4MP</span>
+          <span class="chip" data-value="8MP">8MP</span>
+        </div>
+      </div>
+      <button class="reset-btn" id="reset-filters">重置</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>焦距</th>
+            <th>像素</th>
+            <th>水平视场角</th>
+            <th>俯角 α</th>
+            <th>盲区</th>
+            <th><span class="dori-dot" style="background:var(--D)"></span>D</th>
+            <th><span class="dori-dot" style="background:var(--O)"></span>O</th>
+            <th><span class="dori-dot" style="background:var(--R)"></span>R</th>
+            <th><span class="dori-dot" style="background:var(--I)"></span>I</th>
+            <th>适配场景</th>
+          </tr>
+        </thead>
+        <tbody id="data-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ Tab 4: 并排对比 ============ -->
+  <section id="tab-compare" class="tab-content">
+    <div class="section-head">
+      <span class="section-num">// 04</span>
+      <span class="section-title">并排对比</span>
+      <span class="section-rule"></span>
+      <span class="section-meta">A / B 差值</span>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-head"><span>配置 A</span><span class="marker">A</span></div>
+        <div class="row"><label>焦距</label><select id="compare-a-focal"></select></div>
+        <div class="row"><label>像素</label><select id="compare-a-pixel"></select></div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-head"><span>配置 B</span><span class="marker">B</span></div>
+        <div class="row"><label>焦距</label><select id="compare-b-focal"></select></div>
+        <div class="row"><label>像素</label><select id="compare-b-pixel"></select></div>
+      </div>
+    </div>
+    <div class="compare-result" id="compare-result"></div>
+  </section>
+
+  <footer>
+    <span>数据来源：IEC 62676-4 DORI / 海康 / 大华 / 宇视</span>
+    <span>DUDU &amp; Cailleach<span class="dot">·</span>2026-06-26</span>
+  </footer>
+
+</div>
+
+<script>
+  // ===== Data =====
+  const DATA = [
+    { id: '2.8-2MP', focal: 2.8, pixel: '2MP', hRes: 1920, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 42.0, O: 16.9, R: 8.4, I: 4.2, scenario: '小型室内全覆盖（电梯厅、小房间）' },
+    { id: '2.8-4MP', focal: 2.8, pixel: '4MP', hRes: 2560, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 56.0, O: 22.6, R: 11.2, I: 5.6, scenario: '大堂 / 前台 / 收银区广角' },
+    { id: '2.8-8MP', focal: 2.8, pixel: '8MP', hRes: 3840, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 84.0, O: 33.9, R: 16.8, I: 8.4, scenario: '高清全景（重要出入口、商场中庭）' },
+    { id: '4-2MP', focal: 4, pixel: '2MP', hRes: 1920, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 60.0, O: 24.2, R: 12.0, I: 6.0, scenario: '标准走道（5m 宽 × 30m 长）' },
+    { id: '4-4MP', focal: 4, pixel: '4MP', hRes: 2560, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 80.0, O: 32.3, R: 16.0, I: 8.0, scenario: '收银台 / 电梯厅高清' },
+    { id: '4-8MP', focal: 4, pixel: '8MP', hRes: 3840, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 120.0, O: 48.4, R: 24.0, I: 12.0, scenario: '小型停车场 / 出入口抓拍' },
+    { id: '6-2MP', focal: 6, pixel: '2MP', hRes: 1920, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 90.0, O: 36.3, R: 18.0, I: 9.0, scenario: '中距观察（园区主干道）' },
+    { id: '6-4MP', focal: 6, pixel: '4MP', hRes: 2560, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 120.0, O: 48.4, R: 24.0, I: 12.0, scenario: '中距人脸识别 / 考勤打卡' },
+    { id: '6-8MP', focal: 6, pixel: '8MP', hRes: 3840, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 180.0, O: 72.6, R: 36.0, I: 18.0, scenario: '中距车牌识别 / 周界' },
+    { id: '8-2MP', focal: 8, pixel: '2MP', hRes: 1920, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 120.1, O: 48.4, R: 24.0, I: 12.0, scenario: '远距监控（小区出入口）' },
+    { id: '8-4MP', focal: 8, pixel: '4MP', hRes: 2560, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 160.1, O: 64.6, R: 32.0, I: 16.0, scenario: '远距人脸 / 小区周界' },
+    { id: '8-8MP', focal: 8, pixel: '8MP', hRes: 3840, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 240.2, O: 96.8, R: 48.0, I: 24.0, scenario: '园区周界 / 工地远距' },
+    { id: '12-2MP', focal: 12, pixel: '2MP', hRes: 1920, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 180.1, O: 72.6, R: 36.0, I: 18.0, scenario: '长焦远距（道路卡口）' },
+    { id: '12-4MP', focal: 12, pixel: '4MP', hRes: 2560, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 240.1, O: 96.8, R: 48.0, I: 24.0, scenario: '长焦人脸 / 车辆细节' },
+    { id: '12-8MP', focal: 12, pixel: '8MP', hRes: 3840, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 360.2, O: 145.2, R: 72.0, I: 36.0, scenario: '长焦车牌 / 远距人脸抓拍' }
+  ];
+
+  const SCENARIOS = [
+    { name: '电梯厅（5m × 5m）', distance: '0-5m', dori: 'R', config: '2.8mm @ 4MP', blind: '1.4m', note: '广角全覆盖，盲区可忽略' },
+    { name: '标准走道（5m × 30m）', distance: '0-25m', dori: 'O', config: '4mm @ 2MP', blind: '2.8m', note: '走道两端兼顾，性价比高' },
+    { name: '大堂 / 前台（10m × 10m）', distance: '0-10m', dori: 'R', config: '2.8mm @ 4MP', blind: '1.4m', note: '广角 + 中高像素' },
+    { name: '收银台（5m × 3m）', distance: '0-4m', dori: 'I', config: '4mm @ 4MP', blind: '2.8m', note: '需要 I 级辨认钞票 / 人脸细节' },
+    { name: '停车场出入口（抓车牌）', distance: '8-15m', dori: 'R', config: '6mm @ 4MP', blind: '5.2m', note: '邻杆补盲，覆盖车牌宽度' },
+    { name: '园区周界（短距）', distance: '0-30m', dori: 'O', config: '6mm @ 4MP', blind: '5.2m', note: '50m 间距立杆' },
+    { name: '道路卡口', distance: '15-30m', dori: 'R', config: '12mm @ 4MP', blind: '10.9m', note: '正下方完全盲，需低位补点' }
+  ];
+
+  // ===== Helpers =====
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+  const fmt = (n) => n.toFixed(1);
+  const fmtInt = (n) => n.toFixed(0);
+
+  // ===== State =====
+  const state = {
+    focalFilters: new Set(),
+    pixelFilters: new Set(),
+    diagramFocal: '4',
+    diagramPixel: '4MP',
+    diagramScale: 30,
+    diagramHeight: 2.8,
+    diagramTiltOverride: null, // null = use per-focal auto
+    aFocal: '6', aPixel: '4MP',
+    bFocal: '8', bPixel: '4MP',
+    highlightId: null
+  };
+
+  // ===== Tabs =====
+  $$('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('.tab').forEach(b => b.classList.remove('active'));
+      $$('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      $('#tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ===== Filters =====
+  $$('#filter-focal .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      const v = c.dataset.value;
+      if (state.focalFilters.has(v)) state.focalFilters.delete(v); else state.focalFilters.add(v);
+      c.classList.toggle('active');
+      renderTable();
+    });
+  });
+  $$('#filter-pixel .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      const v = c.dataset.value;
+      if (state.pixelFilters.has(v)) state.pixelFilters.delete(v); else state.pixelFilters.add(v);
+      c.classList.toggle('active');
+      renderTable();
+    });
+  });
+  $('#reset-filters').addEventListener('click', () => {
+    state.focalFilters.clear();
+    state.pixelFilters.clear();
+    state.highlightId = null;
+    $$('.chip').forEach(c => c.classList.remove('active'));
+    renderTable();
+  });
+
+  // ===== Table =====
+  function renderTable() {
+    const rows = DATA.filter(r => {
+      if (state.focalFilters.size && !state.focalFilters.has(String(r.focal))) return false;
+      if (state.pixelFilters.size && !state.pixelFilters.has(r.pixel)) return false;
+      return true;
+    });
+    const warnIf50 = (v) => v > 50 ? `<span class="warn">${fmtInt(v)}</span>` : `<span>${fmtInt(v)}</span>`;
+    $('#data-tbody').innerHTML = rows.map(r => {
+      const isH = r.id === state.highlightId;
+      return `<tr class="${isH ? 'highlight' : ''}" data-id="${r.id}">
+        <td>${r.focal}</td>
+        <td>${r.pixel}</td>
+        <td>${fmt(r.hFov)}°</td>
+        <td>${fmt(r.tilt)}°</td>
+        <td>${fmt(r.blind)}</td>
+        <td>${warnIf50(r.D)}</td>
+        <td>${warnIf50(r.O)}</td>
+        <td>${warnIf50(r.R)}</td>
+        <td>${warnIf50(r.I)}</td>
+        <td class="scenario-cell">${r.scenario}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ===== Diagram =====
+  function renderDiagram() {
+    const r = DATA.find(x => String(x.focal) === state.diagramFocal && x.pixel === state.diagramPixel);
+    if (!r) return;
+
+    const W = 900, H = 460;
+    const maxDist = state.diagramScale;
+    const margin = { left: 80, right: 30, top: 36, bottom: 56 };
+    const drawW = W - margin.left - margin.right;
+    const drawH = H - margin.top - margin.bottom;
+    const camHeight = state.diagramHeight;
+    const unit = Math.min(drawW / maxDist, drawH / Math.max(4, camHeight + 0.5));
+    const groundY = margin.top + drawH;
+    const camX = margin.left;
+    const camYM = groundY - camHeight * unit;
+
+    // Effective tilt: manual override or per-focal auto
+    const effectiveTilt = state.diagramTiltOverride !== null ? state.diagramTiltOverride : r.tilt;
+    const tiltRad = effectiveTilt * Math.PI / 180;
+    const vFovRad = r.vFov * Math.PI / 180;
+    const bottomAngle = tiltRad + vFovRad / 2;
+    const topAngle = tiltRad - vFovRad / 2;
+    // Recalculate blind zone based on current H and tilt
+    const blindDist = bottomAngle > 0 && bottomAngle < Math.PI / 2
+      ? camHeight / Math.tan(bottomAngle)
+      : (camHeight / Math.tan(Math.PI / 2 - 0.01)); // near-vertical: very small
+    const blindX = camX + blindDist * unit;
+
+    // Sync tilt input and AUTO button state
+    $('#diagram-tilt').value = effectiveTilt.toFixed(1);
+    $('#tilt-auto').classList.toggle('manual', state.diagramTiltOverride !== null);
+    $('#tilt-auto').textContent = state.diagramTiltOverride !== null ? 'MANUAL' : 'AUTO';
+
+    let svg = '';
+
+    // Subtle grid
+    svg += `<defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#11161c" stroke-width="1"/>
+      </pattern>
+    </defs>`;
+    svg += `<rect x="${margin.left}" y="${margin.top}" width="${drawW}" height="${drawH}" fill="url(#grid)"/>`;
+
+    // Outer frame
+    svg += `<rect x="${margin.left}" y="${margin.top}" width="${drawW}" height="${drawH}" fill="none" stroke="#1a2129" stroke-width="1"/>`;
+
+    // Distance ticks on ground
+    const stepCount = 6;
+    for (let i = 0; i <= stepCount; i++) {
+      const d = (maxDist / stepCount) * i;
+      const x = camX + d * unit;
+      svg += `<line x1="${x}" y1="${groundY}" x2="${x}" y2="${groundY + 4}" stroke="#4f5864" stroke-width="1"/>`;
+      svg += `<text x="${x}" y="${groundY + 18}" fill="#8a949e" font-size="10" text-anchor="middle" font-family="IBM Plex Mono">${d.toFixed(0)}m</text>`;
+    }
+
+    // Ground line
+    svg += `<line x1="${margin.left}" y1="${groundY}" x2="${margin.left + drawW}" y2="${groundY}" stroke="#2e3845" stroke-width="1.5"/>`;
+    // Wall
+    svg += `<line x1="${camX}" y1="${margin.top}" x2="${camX}" y2="${groundY}" stroke="#2e3845" stroke-width="1.5"/>`;
+    // Mount extension
+    svg += `<line x1="${camX}" y1="${camYM + 6}" x2="${camX}" y2="${groundY}" stroke="#1a2129" stroke-width="1" stroke-dasharray="2,3"/>`;
+
+    // Horizon line (at camera height)
+    svg += `<line x1="${camX}" y1="${camYM}" x2="${margin.left + drawW}" y2="${camYM}" stroke="#2e3845" stroke-width="1" stroke-dasharray="4,4"/>`;
+    svg += `<text x="${margin.left + drawW - 6}" y="${camYM - 5}" fill="#4f5864" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平线</text>`;
+
+    // FOV cone edges
+    const edgeLen = 220;
+    const bX = camX + edgeLen * Math.cos(bottomAngle);
+    const bY = camYM + edgeLen * Math.sin(bottomAngle);
+    const tX = camX + edgeLen * Math.cos(topAngle);
+    const tY = camYM + edgeLen * Math.sin(topAngle);
+    svg += `<line x1="${camX}" y1="${camYM}" x2="${bX}" y2="${bY}" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
+    svg += `<line x1="${camX}" y1="${camYM}" x2="${tX}" y2="${tY}" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
+
+    // DORI zone bands
+    const doriZones = [
+      { name: 'I', color: '--I', dist: r.I },
+      { name: 'R', color: '--R', dist: r.R },
+      { name: 'O', color: '--O', dist: r.O },
+      { name: 'D', color: '--D', dist: r.D }
+    ];
+    const bandH = 16;
+    const edgeX = camX + drawW;
+    for (let i = 0; i < doriZones.length; i++) {
+      const z = doriZones[i];
+      const startX = i === 0 ? blindX : camX + doriZones[i - 1].dist * unit;
+      let endX = camX + z.dist * unit;
+      if (endX <= startX) continue;
+      if (endX > edgeX) endX = edgeX;
+      const widthX = endX - startX;
+      // Resolve CSS var to actual color
+      const col = getComputedStyle(document.documentElement).getPropertyValue(z.color).trim();
+      svg += `<rect x="${startX}" y="${groundY - bandH}" width="${widthX}" height="${bandH}" fill="${col}" fill-opacity="0.4"/>`;
+      if (widthX > 28) {
+        svg += `<text x="${startX + widthX / 2}" y="${groundY - bandH / 2 + 4}" fill="#0a0d11" font-size="10" text-anchor="middle" font-weight="700" font-family="IBM Plex Mono" letter-spacing="1">${z.name}</text>`;
+      }
+    }
+
+    // Blind zone (red triangle)
+    svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="#ff3d57" fill-opacity="0.15"/>`;
+    // Hatched pattern for blind zone
+    svg += `<defs>
+      <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="6" stroke="#ff3d57" stroke-width="1" opacity="0.5"/>
+      </pattern>
+    </defs>`;
+    svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
+    svg += `<text x="${(camX + blindX) / 2}" y="${groundY - camHeight * unit / 2 - 6}" fill="#ff3d57" font-size="10" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">盲区 ${fmt(blindDist)}m</text>`;
+
+    // Center axis (tilt direction)
+    const cX = camX + edgeLen * Math.cos(tiltRad);
+    const cY = camYM + edgeLen * Math.sin(tiltRad);
+    svg += `<line x1="${camX}" y1="${camYM}" x2="${cX}" y2="${cY}" stroke="#00d4ff" stroke-width="1.5"/>`;
+    // Tilt angle arc
+    const arcR = 32;
+    const aS = camX + arcR;
+    const aSY = camYM;
+    const aE = camX + arcR * Math.cos(tiltRad);
+    const aEY = camYM + arcR * Math.sin(tiltRad);
+    svg += `<path d="M ${aS} ${aSY} A ${arcR} ${arcR} 0 0 1 ${aE} ${aEY}" fill="none" stroke="#00d4ff" stroke-width="1.2"/>`;
+    svg += `<text x="${camX + arcR + 6}" y="${camYM + arcR * 0.4 + 4}" fill="#00d4ff" font-size="11" font-weight="600" font-family="IBM Plex Mono" letter-spacing=".5">俯角 ${fmt(effectiveTilt)}°</text>`;
+
+    // DORI markers
+    const doriMarkers = [
+      { name: 'I', color: '#ff3d57', dist: r.I },
+      { name: 'R', color: '#ff7a00', dist: r.R },
+      { name: 'O', color: '#ffb800', dist: r.O },
+      { name: 'D', color: '#00d68f', dist: r.D }
+    ];
+    doriMarkers.forEach((m, idx) => {
+      if (m.dist > maxDist) {
+        svg += `<text x="${margin.left + drawW - 6}" y="${groundY - 80 - idx * 13}" fill="${m.color}" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">${m.name} ${fmtInt(m.dist)}m · 超出视图</text>`;
+        return;
+      }
+      const x = camX + m.dist * unit;
+      if (x > blindX) {
+        svg += `<line x1="${x}" y1="${groundY}" x2="${x}" y2="${groundY - 22}" stroke="${m.color}" stroke-width="1.5"/>`;
+        svg += `<circle cx="${x}" cy="${groundY}" r="3.5" fill="${m.color}"/>`;
+        svg += `<text x="${x}" y="${groundY + 33}" fill="${m.color}" font-size="10.5" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${m.name}·${fmtInt(m.dist)}</text>`;
+      }
+    });
+
+    // Camera icon
+    const camW = 18, camH = 11;
+    svg += `<rect x="${camX - camW / 2}" y="${camYM - camH / 2}" width="${camW}" height="${camH}" fill="#00d4ff" stroke="#0a0d11" stroke-width="1"/>`;
+    svg += `<polygon points="${camX + camW / 2},${camYM - 3} ${camX + camW / 2 + 7},${camYM} ${camX + camW / 2},${camYM + 3}" fill="#00d4ff"/>`;
+    // Height label
+    svg += `<line x1="${camX - 6}" y1="${camYM}" x2="${camX - 22}" y2="${camYM}" stroke="#4f5864" stroke-width="1"/>`;
+    svg += `<line x1="${camX - 6}" y1="${groundY}" x2="${camX - 22}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
+    svg += `<line x1="${camX - 18}" y1="${camYM}" x2="${camX - 18}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
+    svg += `<text x="${camX - 24}" y="${(camYM + groundY) / 2 + 4}" fill="#8a949e" font-size="10" text-anchor="end" font-family="IBM Plex Mono">${fmt(camHeight)}m</text>`;
+
+    // Title in top-left
+    svg += `<text x="${margin.left + 6}" y="${margin.top - 14}" fill="#e8ecef" font-size="12" font-weight="600" font-family="IBM Plex Sans Condensed" letter-spacing="2">${r.focal}MM @ ${r.pixel}</text>`;
+    svg += `<text x="${margin.left + drawW - 6}" y="${margin.top - 14}" fill="#8a949e" font-size="10" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平 ${fmt(r.hFov)}° · 垂直 ${fmt(r.vFov)}°</text>`;
+
+    $('#diagram').innerHTML = svg;
+
+    // Stats
+    const stats = [
+      { cls: 'blind', label: '盲区', val: fmt(blindDist), unit: 'm' },
+      { cls: 'I', label: 'I · 辨识 (250px/m)', val: fmtInt(r.I), unit: 'm' },
+      { cls: 'R', label: 'R · 识别 (125px/m)', val: fmtInt(r.R), unit: 'm' },
+      { cls: 'O', label: 'O · 观察 (62px/m)', val: fmtInt(r.O), unit: 'm' },
+      { cls: 'D', label: 'D · 探测 (25px/m)', val: fmtInt(r.D), unit: 'm' }
+    ];
+    $('#diagram-stats').innerHTML = stats.map(s =>
+      `<div class="stat ${s.cls}">
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-value">${s.val}<span class="stat-unit">${s.unit}</span></div>
+      </div>`
+    ).join('');
+  }
+
+  // Diagram controls
+  $('#diagram-focal').addEventListener('change', e => { state.diagramFocal = e.target.value; renderDiagram(); });
+  $('#diagram-pixel').addEventListener('change', e => { state.diagramPixel = e.target.value; renderDiagram(); });
+  $('#diagram-scale').addEventListener('change', e => { state.diagramScale = parseInt(e.target.value) || 30; renderDiagram(); });
+  $('#diagram-height').addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    if (v >= 0.5 && v <= 10) { state.diagramHeight = v; renderDiagram(); }
+  });
+  $('#diagram-tilt').addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    if (!isNaN(v) && v >= 0 && v <= 80) { state.diagramTiltOverride = v; renderDiagram(); }
+  });
+  $('#tilt-auto').addEventListener('click', () => { state.diagramTiltOverride = null; renderDiagram(); });
+
+  // ===== Compare =====
+  function populateCompare() {
+    const focals = [2.8, 4, 6, 8, 12];
+    const pixels = ['2MP', '4MP', '8MP'];
+    ['a', 'b'].forEach(prefix => {
+      const fSel = $(`#compare-${prefix}-focal`);
+      const pSel = $(`#compare-${prefix}-pixel`);
+      fSel.innerHTML = focals.map(f => `<option value="${f}">${f}mm</option>`).join('');
+      pSel.innerHTML = pixels.map(p => `<option value="${p}">${p}</option>`).join('');
+      fSel.value = state[prefix + 'Focal'];
+      pSel.value = state[prefix + 'Pixel'];
+      fSel.addEventListener('change', e => { state[prefix + 'Focal'] = e.target.value; renderCompare(); });
+      pSel.addEventListener('change', e => { state[prefix + 'Pixel'] = e.target.value; renderCompare(); });
+    });
+  }
+
+  function renderCompare() {
+    const a = DATA.find(x => String(x.focal) === state.aFocal && x.pixel === state.aPixel);
+    const b = DATA.find(x => String(x.focal) === state.bFocal && x.pixel === state.bPixel);
+    if (!a || !b) return;
+
+    const rows = [
+      { label: '焦距 / 像素', a: `${a.focal}mm @ ${a.pixel}`, b: `${b.focal}mm @ ${b.pixel}`, fmt: x => x, delta: false },
+      { label: '水平视场角', a: a.hFov, b: b.hFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
+      { label: '俯角 α', a: a.tilt, b: b.tilt, fmt: x => fmt(x) + '°', delta: true, higherBetter: false },
+      { label: '盲区', a: a.blind, b: b.blind, fmt: x => fmt(x) + 'm', delta: true, higherBetter: false },
+      { label: 'I · 辨识', a: a.I, b: b.I, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: 'R · 识别', a: a.R, b: b.R, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: 'O · 观察', a: a.O, b: b.O, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: 'D · 探测', a: a.D, b: b.D, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true }
+    ];
+
+    const html = `<table>
+      <thead><tr>
+        <th style="text-align:left">指标</th>
+        <th>A</th>
+        <th>B</th>
+        <th>B − A</th>
+      </tr></thead>
+      <tbody>${rows.map(r => {
+        let deltaCell = '<span class="delta-zero">—</span>';
+        if (r.delta) {
+          const diff = r.b - r.a;
+          if (Math.abs(diff) < 0.05) {
+            deltaCell = '<span class="delta-zero">≈ 0</span>';
+          } else {
+            const aBetter = r.higherBetter ? diff < 0 : diff > 0;
+            const cls = aBetter ? 'delta-neg' : 'delta-pos';
+            const sign = diff > 0 ? '+' : '';
+            deltaCell = `<span class="${cls}">${sign}${r.fmt(diff)}</span>`;
+          }
+        }
+        return `<tr>
+          <td style="text-align:left">${r.label}</td>
+          <td>${r.fmt(r.a)}</td>
+          <td>${r.fmt(r.b)}</td>
+          <td>${deltaCell}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+    $('#compare-result').innerHTML = html;
+  }
+
+  // ===== Scenarios =====
+  function renderScenarios() {
+    $('#scenario-grid').innerHTML = SCENARIOS.map((s, i) => `
+      <div class="scenario-card" data-idx="${i}">
+        <div class="sc-num">// ${String(i + 1).padStart(2, '0')}</div>
+        <div class="sc-title">${s.name}</div>
+        <div class="sc-config">${s.config}</div>
+        <div class="sc-meta">
+          <span><span class="k">距离</span>${s.distance}</span>
+          <span><span class="k">DORI</span>${s.dori}</span>
+          <span><span class="k">盲区</span>${s.blind}</span>
+        </div>
+        <div class="sc-note">${s.note}</div>
+      </div>
+    `).join('');
+
+    $$('.scenario-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const sc = SCENARIOS[parseInt(card.dataset.idx)];
+        const m = sc.config.match(/^([\d.]+)mm\s*@\s*(2MP|4MP|8MP)$/);
+        if (!m) return;
+        const focal = m[1];
+        const pixel = m[2];
+        $$('.tab').forEach(b => b.classList.remove('active'));
+        $$('.tab-content').forEach(c => c.classList.remove('active'));
+        $('.tab[data-tab="table"]').classList.add('active');
+        $('#tab-table').classList.add('active');
+        state.focalFilters = new Set([focal]);
+        state.pixelFilters = new Set([pixel]);
+        state.highlightId = `${focal}-${pixel}`;
+        $$('#filter-focal .chip').forEach(c => c.classList.toggle('active', c.dataset.value === focal));
+        $$('#filter-pixel .chip').forEach(c => c.classList.toggle('active', c.dataset.value === pixel));
+        renderTable();
+      });
+    });
+  }
+
+  // ===== Init =====
+  renderTable();
+  renderDiagram();
+  populateCompare();
+  renderCompare();
+  renderScenarios();
+</script>
+</body>
+</html>
