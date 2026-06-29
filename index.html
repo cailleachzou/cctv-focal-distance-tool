@@ -1200,11 +1200,11 @@
     const effectiveTilt = state.diagramTiltOverride !== null ? state.diagramTiltOverride : r.tilt;
     const tiltRad = effectiveTilt * Math.PI / 180;
     const vFovRad = r.vFov * Math.PI / 180;
-    const bottomAngle = tiltRad + vFovRad / 2;
-    const topAngle = tiltRad - vFovRad / 2;
-    const blindDist = bottomAngle > 0 && bottomAngle < Math.PI / 2
-      ? camHeight / Math.tan(bottomAngle)
-      : (camHeight / Math.tan(Math.PI / 2 - 0.01));
+    let bottomAngle = tiltRad + vFovRad / 2;
+    let topAngle = tiltRad - vFovRad / 2;
+    if (bottomAngle > Math.PI / 2 - 0.01) bottomAngle = Math.PI / 2 - 0.01;
+    if (topAngle < 0.01) topAngle = 0.01;
+    const blindDist = camHeight / Math.tan(bottomAngle);
     const blindX = camX + blindDist * unit;
 
     $('#diagram-tilt').value = effectiveTilt.toFixed(1);
