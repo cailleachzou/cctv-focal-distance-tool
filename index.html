@@ -1181,7 +1181,6 @@
     $('#diagram-tilt').value = effectiveTilt.toFixed(1);
     $('#tilt-auto').classList.toggle('manual', state.diagramTiltOverride !== null);
     $('#tilt-auto').textContent = state.diagramTiltOverride !== null ? 'MANUAL' : 'AUTO';
-    $('#hdr-sensor').textContent = sensor.label;
 
     let svg = '';
 
