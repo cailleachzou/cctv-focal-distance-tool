@@ -1525,6 +1525,8 @@
     });
     renderTable();
     renderDiagram();
+    populateSensorSelect($('#compare-a-sensor'), state.aSensor);
+    populateSensorSelect($('#compare-b-sensor'), state.bSensor);
     renderCompare();
     renderScenarios();
     renderFooter();
