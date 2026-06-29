@@ -1100,10 +1100,17 @@
     $('#theme-toggle').textContent = isDark ? '\u263E' : '\u2600';
     renderDiagram();
   }
-  let currentTheme = 'dark';
-  applyTheme('dark');
+  let currentTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  applyTheme(currentTheme);
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+    if (!$('#theme-toggle').dataset.manual) {
+      currentTheme = e.matches ? 'light' : 'dark';
+      applyTheme(currentTheme);
+    }
+  });
   $('#theme-toggle').addEventListener('click', () => {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    $('#theme-toggle').dataset.manual = '1';
     applyTheme(currentTheme);
   });
 
