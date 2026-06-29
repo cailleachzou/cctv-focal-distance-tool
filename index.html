@@ -1268,11 +1268,12 @@
     }
 
     const farX = margin.left + drawW;
-    const upperFarY = Math.min(camYM, camYM + (farX - camX) * Math.tan(topAngle));
+    const rawUpperY = camYM + (farX - camX) * Math.tan(topAngle);
+    const upperFarY = Math.min(rawUpperY, groundY);
     svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperFarY}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
     svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperFarY}" fill="url(#hatch)"/>`;
     const ubMidX = camX + (farX - camX) * 0.35;
-    const ubMidY = camYM + Math.min(0, (ubMidX - camX) * Math.tan(topAngle) * 0.4);
+    const ubMidY = (camYM + Math.min(camYM + (ubMidX - camX) * Math.tan(topAngle), groundY)) / 2;
     svg += `<text x="${ubMidX}" y="${ubMidY + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
 
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
