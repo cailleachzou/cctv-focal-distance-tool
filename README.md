@@ -57,6 +57,10 @@
 
 A / B 双配置对比，差值用颜色标注（绿色更优 / 红色更差）。
 
+## 在线预览
+
+🔗 **[在线访问（v1.1 老版本）](https://cailleachzou.github.io/cctv-focal-distance-tool/pre-20260629/)**
+
 ## 快速使用
 
 ```bash
