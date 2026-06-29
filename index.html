@@ -243,7 +243,7 @@
     width: 100%;
     height: auto;
     display: block;
-    background: #ffffff;
+    background: var(--svg-bg);
     border: 1px solid var(--border);
   }
 
@@ -676,12 +676,6 @@
 
   <!-- ============ Tab 1: 视场角分析 ============ -->
   <section id="tab-diagram" class="tab-content active">
-    <div class="section-head">
-      <span class="section-num">// 01</span>
-      <span class="section-title">视场角分析</span>
-      <span class="section-rule"></span>
-      <span class="section-meta">侧视图 · 传感器 / 高度 / 俯角可调</span>
-    </div>
     <div class="diagram-wrap">
       <div class="diagram-controls">
         <div class="ctrl-group">
@@ -847,23 +841,11 @@
 
   <!-- ============ Tab 2: 部署模板 ============ -->
   <section id="tab-scenario" class="tab-content">
-    <div class="section-head">
-      <span class="section-num">// 02</span>
-      <span class="section-title">部署模板</span>
-      <span class="section-rule"></span>
-      <span class="section-meta">11 个预设 · 点击加载</span>
-    </div>
     <div class="scenario-grid" id="scenario-grid"></div>
   </section>
 
   <!-- ============ Tab 3: 数据矩阵 ============ -->
   <section id="tab-table" class="tab-content">
-    <div class="section-head">
-      <span class="section-num">// 03</span>
-      <span class="section-title">完整数据矩阵</span>
-      <span class="section-rule"></span>
-      <span class="section-meta" id="table-meta">15 条数据 · 5×3</span>
-    </div>
     <div class="filters">
       <div class="filter-group">
         <span class="filter-label">传感器</span>
@@ -914,12 +896,6 @@
 
   <!-- ============ Tab 4: 并排对比 ============ -->
   <section id="tab-compare" class="tab-content">
-    <div class="section-head">
-      <span class="section-num">// 04</span>
-      <span class="section-title">并排对比</span>
-      <span class="section-rule"></span>
-      <span class="section-meta">A / B 差值 · 支持跨传感器对比</span>
-    </div>
     <div class="compare-grid">
       <div class="compare-col">
         <div class="compare-col-head"><span id="comp-a-label">配置 A</span><span class="marker">A</span></div>
@@ -1491,10 +1467,6 @@
     $$('.tab')[1].innerHTML = `<span class="num">02</span>${t('t2')}`;
     $$('.tab')[2].innerHTML = `<span class="num">03</span>${t('t3')}`;
     $$('.tab')[3].innerHTML = `<span class="num">04</span>${t('t4')}`;
-    $$('.section-meta')[0].textContent = t('secMeta1');
-    $$('.section-meta')[1].textContent = t('secMeta2');
-    $$('.section-meta')[2].textContent = t('secMeta3');
-    $$('.section-meta')[3].textContent = t('secMeta4');
     $$('.ctrl-label')[0].textContent = t('fSensor');
     $$('.ctrl-label')[1].textContent = t('focal');
     $$('.ctrl-label')[2].textContent = t('pixel');
