@@ -358,6 +358,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     align-items: center;
+    flex-wrap: wrap;
   }
   .filter-group { display: flex; align-items: center; gap: 14px; }
   .filter-label {
@@ -367,7 +368,7 @@
     letter-spacing: 1.5px;
     text-transform: uppercase;
   }
-  .chips { display: flex; gap: 6px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip {
     padding: 5px 12px;
     border: 1px solid var(--border-strong);
@@ -416,9 +417,23 @@
   }
   .auto-btn:hover { background: var(--primary-glow); }
 
+  .export-btn {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-2);
+    padding: 5px 10px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: color .1s, border-color .1s;
+  }
+  .export-btn:hover { color: var(--primary); border-color: var(--primary); }
+
   .table-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
+    overflow-x: auto;
   }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   th, td {
@@ -427,6 +442,7 @@
     border-bottom: 1px solid var(--border);
     font-family: "IBM Plex Mono", monospace;
     font-size: 12.5px;
+    white-space: nowrap;
   }
   th:first-child, td:first-child,
   th:nth-child(2), td:nth-child(2),
@@ -491,7 +507,7 @@
     border: 1px solid var(--border);
     border-top: none;
   }
-  .compare-result th, .compare-result td { font-size: 12px; padding: 10px 14px; }
+  .compare-result th, .compare-result td { font-size: 12px; padding: 10px 14px; white-space: nowrap; }
   .compare-result th { font-size: 10px; }
   .compare-result td:first-child { color: var(--text-2); font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif; font-size: 12px; }
   .delta-pos { color: var(--D); }
@@ -515,7 +531,7 @@
   }
   .scenario-card:hover { background: var(--surface-2); }
   .scenario-card:hover::after {
-    content: "→";
+    content: "\2192";
     position: absolute;
     right: 18px;
     top: 18px;
@@ -561,6 +577,18 @@
     margin-top: 8px;
     line-height: 1.5;
   }
+  .sc-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid var(--border-strong);
+    color: var(--text-3);
+    margin-right: 6px;
+  }
+  .sc-tag.traffic { border-color: var(--R); color: var(--R); }
 
   /* ===== Footer ===== */
   footer {
@@ -594,13 +622,13 @@
   <header>
     <div>
       <div class="header-title">焦距<span class="x">×</span>像素<span class="x">×</span>距离</div>
-      <div class="header-sub">摄像机选型参考 · 焦距 / 像素 / 距离</div>
+      <div class="header-sub">摄像机选型参考 · 焦距 / 像素 / 传感器 / 距离</div>
     </div>
     <div class="header-meta">
-      <div><span class="k">传感器</span><span class="v">1/2.8"</span></div>
+      <div><span class="k">传感器</span><span class="v" id="hdr-sensor">1/2.8"</span></div>
       <div><span class="k">安装高</span><span class="v">2.8m</span></div>
       <div><span class="k">标准</span><span class="v">IEC 62676-4</span></div>
-      <div><span class="k">版本</span><span class="v">1.0</span></div>
+      <div><span class="k">版本</span><span class="v">1.1</span></div>
     </div>
   </header>
 
@@ -617,10 +645,14 @@
       <span class="section-num">// 01</span>
       <span class="section-title">视场角分析</span>
       <span class="section-rule"></span>
-      <span class="section-meta">侧视图 · 高度 / 俯角可调</span>
+      <span class="section-meta">侧视图 · 传感器 / 高度 / 俯角可调</span>
     </div>
     <div class="diagram-wrap">
       <div class="diagram-controls">
+        <div class="ctrl-group">
+          <span class="ctrl-label">传感器</span>
+          <select id="diagram-sensor"></select>
+        </div>
         <div class="ctrl-group">
           <span class="ctrl-label">焦距</span>
           <select id="diagram-focal">
@@ -651,6 +683,10 @@
           <span class="ctrl-label">俯角 (°)</span>
           <input type="number" id="diagram-tilt" min="0" max="80" step="0.5" style="width: 70px;">
           <button class="auto-btn" id="tilt-auto" title="重置为按焦距推荐值">AUTO</button>
+        </div>
+        <div class="ctrl-group" style="margin-left:auto;">
+          <button class="export-btn" id="export-svg" title="导出 SVG">SVG</button>
+          <button class="export-btn" id="export-pdf" title="导出 PDF">PDF</button>
         </div>
       </div>
       <svg id="diagram" viewBox="0 0 900 160" preserveAspectRatio="xMidYMid meet"></svg>
@@ -780,7 +816,7 @@
       <span class="section-num">// 02</span>
       <span class="section-title">部署模板</span>
       <span class="section-rule"></span>
-      <span class="section-meta">7 个预设 · 点击加载</span>
+      <span class="section-meta">11 个预设 · 点击加载</span>
     </div>
     <div class="scenario-grid" id="scenario-grid"></div>
   </section>
@@ -791,9 +827,13 @@
       <span class="section-num">// 03</span>
       <span class="section-title">完整数据矩阵</span>
       <span class="section-rule"></span>
-      <span class="section-meta">15 条数据 · 5×3</span>
+      <span class="section-meta" id="table-meta">15 条数据 · 5×3</span>
     </div>
     <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">传感器</span>
+        <select id="table-sensor" style="min-width: 100px;"></select>
+      </div>
       <div class="filter-group">
         <span class="filter-label">焦距</span>
         <div class="chips" id="filter-focal">
@@ -818,10 +858,12 @@
       <table>
         <thead>
           <tr>
+            <th>传感器</th>
             <th>焦距</th>
             <th>像素</th>
-            <th>水平视场角</th>
-            <th>俯角 α</th>
+            <th>H-FOV</th>
+            <th>V-FOV</th>
+            <th>俯角</th>
             <th>盲区</th>
             <th><span class="dori-dot" style="background:var(--D)"></span>D</th>
             <th><span class="dori-dot" style="background:var(--O)"></span>O</th>
@@ -841,16 +883,18 @@
       <span class="section-num">// 04</span>
       <span class="section-title">并排对比</span>
       <span class="section-rule"></span>
-      <span class="section-meta">A / B 差值</span>
+      <span class="section-meta">A / B 差值 · 支持跨传感器对比</span>
     </div>
     <div class="compare-grid">
       <div class="compare-col">
         <div class="compare-col-head"><span>配置 A</span><span class="marker">A</span></div>
+        <div class="row"><label>传感器</label><select id="compare-a-sensor"></select></div>
         <div class="row"><label>焦距</label><select id="compare-a-focal"></select></div>
         <div class="row"><label>像素</label><select id="compare-a-pixel"></select></div>
       </div>
       <div class="compare-col">
         <div class="compare-col-head"><span>配置 B</span><span class="marker">B</span></div>
+        <div class="row"><label>传感器</label><select id="compare-b-sensor"></select></div>
         <div class="row"><label>焦距</label><select id="compare-b-focal"></select></div>
         <div class="row"><label>像素</label><select id="compare-b-pixel"></select></div>
       </div>
@@ -860,39 +904,75 @@
 
   <footer>
     <span>数据来源：IEC 62676-4 DORI / 海康 / 大华 / 宇视</span>
-    <span>DUDU &amp; Cailleach<span class="dot">·</span>2026-06-26</span>
+    <span>DUDU &amp; Cailleach<span class="dot">·</span>2026-06-29</span>
   </footer>
 
 </div>
 
 <script>
-  // ===== Data =====
-  const DATA = [
-    { id: '2.8-2MP', focal: 2.8, pixel: '2MP', hRes: 1920, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 42.0, O: 16.9, R: 8.4, I: 4.2, scenario: '小型室内全覆盖（电梯厅、小房间）' },
-    { id: '2.8-4MP', focal: 2.8, pixel: '4MP', hRes: 2560, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 56.0, O: 22.6, R: 11.2, I: 5.6, scenario: '大堂 / 前台 / 收银区广角' },
-    { id: '2.8-8MP', focal: 2.8, pixel: '8MP', hRes: 3840, hFov: 84.8, vFov: 68.9, tilt: 29.2, blind: 1.4, D: 84.0, O: 33.9, R: 16.8, I: 8.4, scenario: '高清全景（重要出入口、商场中庭）' },
-    { id: '4-2MP', focal: 4, pixel: '2MP', hRes: 1920, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 60.0, O: 24.2, R: 12.0, I: 6.0, scenario: '标准走道（5m 宽 × 30m 长）' },
-    { id: '4-4MP', focal: 4, pixel: '4MP', hRes: 2560, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 80.0, O: 32.3, R: 16.0, I: 8.0, scenario: '收银台 / 电梯厅高清' },
-    { id: '4-8MP', focal: 4, pixel: '8MP', hRes: 3840, hFov: 65.2, vFov: 51.3, tilt: 19.3, blind: 2.8, D: 120.0, O: 48.4, R: 24.0, I: 12.0, scenario: '小型停车场 / 出入口抓拍' },
-    { id: '6-2MP', focal: 6, pixel: '2MP', hRes: 1920, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 90.0, O: 36.3, R: 18.0, I: 9.0, scenario: '中距观察（园区主干道）' },
-    { id: '6-4MP', focal: 6, pixel: '4MP', hRes: 2560, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 120.0, O: 48.4, R: 24.0, I: 12.0, scenario: '中距人脸识别 / 考勤打卡' },
-    { id: '6-8MP', focal: 6, pixel: '8MP', hRes: 3840, hFov: 46.2, vFov: 35.5, tilt: 10.6, blind: 5.2, D: 180.0, O: 72.6, R: 36.0, I: 18.0, scenario: '中距车牌识别 / 周界' },
-    { id: '8-2MP', focal: 8, pixel: '2MP', hRes: 1920, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 120.1, O: 48.4, R: 24.0, I: 12.0, scenario: '远距监控（小区出入口）' },
-    { id: '8-4MP', focal: 8, pixel: '4MP', hRes: 2560, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 160.1, O: 64.6, R: 32.0, I: 16.0, scenario: '远距人脸 / 小区周界' },
-    { id: '8-8MP', focal: 8, pixel: '8MP', hRes: 3840, hFov: 35.5, vFov: 27.0, tilt: 8.0, blind: 7.1, D: 240.2, O: 96.8, R: 48.0, I: 24.0, scenario: '园区周界 / 工地远距' },
-    { id: '12-2MP', focal: 12, pixel: '2MP', hRes: 1920, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 180.1, O: 72.6, R: 36.0, I: 18.0, scenario: '长焦远距（道路卡口）' },
-    { id: '12-4MP', focal: 12, pixel: '4MP', hRes: 2560, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 240.1, O: 96.8, R: 48.0, I: 24.0, scenario: '长焦人脸 / 车辆细节' },
-    { id: '12-8MP', focal: 12, pixel: '8MP', hRes: 3840, hFov: 24.1, vFov: 18.2, tilt: 5.3, blind: 10.9, D: 360.2, O: 145.2, R: 72.0, I: 36.0, scenario: '长焦车牌 / 远距人脸抓拍' }
+  // ===== Sensor Database =====
+  const SENSORS = [
+    { id: 'S0', label: '1/3"',   w: 4.8,  h: 3.6,  note: '入门级半球' },
+    { id: 'S1', label: '1/2.8"', w: 5.12, h: 3.84, note: '主流 IP 摄像机' },
+    { id: 'S2', label: '1/2.7"', w: 5.37, h: 4.03, note: '中端枪机' },
+    { id: 'S3', label: '1/2.5"', w: 5.76, h: 4.29, note: '部分变焦一体机' },
+    { id: 'S4', label: '1/2"',   w: 6.4,  h: 4.8,  note: '中高端枪机' },
+    { id: 'S5', label: '1/1.8"', w: 7.18, h: 5.32, note: '高端枪机/PTZ' },
+    { id: 'S6', label: '1/1.7"', w: 7.6,  h: 5.7,  note: '专业级/星光级' },
+    { id: 'S7', label: '2/3"',   w: 8.8,  h: 6.6,  note: '广播级/工业级' }
   ];
 
+  const FOCALS = [2.8, 4, 6, 8, 12];
+  const PIXELS = ['2MP', '4MP', '8MP'];
+  const H_RES = { '2MP': 1920, '4MP': 2560, '8MP': 3840 };
+  const TILT_RECOMMEND = { 2.8: 29.2, 4: 19.3, 6: 10.6, 8: 8.0, 12: 5.3 };
+
+  // ===== Computation Engine =====
+  function calcRow(sensorW, sensorH, focal, pixel) {
+    const hPixels = H_RES[pixel];
+    const hFov = 2 * Math.atan(sensorW / (2 * focal)) * 180 / Math.PI;
+    const vFov = 2 * Math.atan(sensorH / (2 * focal)) * 180 / Math.PI;
+    const tilt = TILT_RECOMMEND[focal] || 15;
+    const blind = 2.8 / Math.tan((tilt + vFov / 2) * Math.PI / 180);
+    const doriCalc = (pxPerM) => (hPixels * focal) / (sensorW * pxPerM);
+    return {
+      hFov, vFov, tilt, blind,
+      D: doriCalc(25),
+      O: doriCalc(62),
+      R: doriCalc(125),
+      I: doriCalc(250)
+    };
+  }
+
+  function getSensor(id) { return SENSORS.find(s => s.id === id); }
+
+  // Scenario lookup helper for mapping sensor+focal+pixel to scenario text
+  function scenarioText(sensorId, focal, pixel) {
+    const s = getSensor(sensorId);
+    const r = calcRow(s.w, s.h, focal, pixel);
+    const d = r.R;
+    if (d < 6) return '小型室内全覆盖（电梯厅、小房间）';
+    if (d < 10) return '大堂 / 前台 / 收银区广角';
+    if (d < 15) return '标准走道 / 收银台 / 电梯厅高清';
+    if (d < 20) return '中距观察 / 人脸识别 / 考勤打卡';
+    if (d < 30) return '停车场出入口 / 园区周界';
+    if (d < 50) return '远距监控 / 周界 / 工地';
+    return '长焦远距 / 道路卡口';
+  }
+
+  // ===== Data =====
   const SCENARIOS = [
-    { name: '电梯厅（5m × 5m）', distance: '0-5m', dori: 'R', config: '2.8mm @ 4MP', blind: '1.4m', note: '广角全覆盖，盲区可忽略' },
-    { name: '标准走道（5m × 30m）', distance: '0-25m', dori: 'O', config: '4mm @ 2MP', blind: '2.8m', note: '走道两端兼顾，性价比高' },
-    { name: '大堂 / 前台（10m × 10m）', distance: '0-10m', dori: 'R', config: '2.8mm @ 4MP', blind: '1.4m', note: '广角 + 中高像素' },
-    { name: '收银台（5m × 3m）', distance: '0-4m', dori: 'I', config: '4mm @ 4MP', blind: '2.8m', note: '需要 I 级辨认钞票 / 人脸细节' },
-    { name: '停车场出入口（抓车牌）', distance: '8-15m', dori: 'R', config: '6mm @ 4MP', blind: '5.2m', note: '邻杆补盲，覆盖车牌宽度' },
-    { name: '园区周界（短距）', distance: '0-30m', dori: 'O', config: '6mm @ 4MP', blind: '5.2m', note: '50m 间距立杆' },
-    { name: '道路卡口', distance: '15-30m', dori: 'R', config: '12mm @ 4MP', blind: '10.9m', note: '正下方完全盲，需低位补点' }
+    { name: '电梯厅（5m × 5m）', distance: '0-5m', dori: 'R', config: '2.8mm @ 4MP', sensor: 'S1', blind: '1.4m', note: '广角全覆盖，盲区可忽略' },
+    { name: '标准走道（5m × 30m）', distance: '0-25m', dori: 'O', config: '4mm @ 2MP', sensor: 'S1', blind: '2.8m', note: '走道两端兼顾，性价比高' },
+    { name: '大堂 / 前台（10m × 10m）', distance: '0-10m', dori: 'R', config: '2.8mm @ 4MP', sensor: 'S1', blind: '1.4m', note: '广角 + 中高像素' },
+    { name: '收银台（5m × 3m）', distance: '0-4m', dori: 'I', config: '4mm @ 4MP', sensor: 'S1', blind: '2.8m', note: '需要 I 级辨认钞票 / 人脸细节' },
+    { name: '停车场出入口（抓车牌）', distance: '8-15m', dori: 'R', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '邻杆补盲，覆盖车牌宽度' },
+    { name: '园区周界（短距）', distance: '0-30m', dori: 'O', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '50m 间距立杆' },
+    { name: '道路卡口', distance: '15-30m', dori: 'R', config: '12mm @ 4MP', sensor: 'S1', blind: '10.9m', note: '正下方完全盲，需低位补点' },
+    { name: '高速公路卡口', distance: '15-30m', dori: 'R-I', config: '8mm @ 8MP', sensor: 'S5', blind: '7.1m', note: '车牌识别 + 车内人脸，快门 \u2265 1/1000s', tag: 'traffic' },
+    { name: '城市隧道', distance: '10-25m', dori: 'R-I', config: '6mm @ 8MP', sensor: 'S5', blind: '5.2m', note: '低照度 + 补光，需宽动态', tag: 'traffic' },
+    { name: '城市十字路口', distance: '15-40m', dori: 'R-I', config: '8mm @ 4MP', sensor: 'S5', blind: '7.1m', note: '多车道覆盖，红绿灯状态联动', tag: 'traffic' },
+    { name: '公交专用道', distance: '10-20m', dori: 'R', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '连续覆盖，需防抖', tag: 'traffic' }
   ];
 
   // ===== Helpers =====
@@ -905,15 +985,24 @@
   const state = {
     focalFilters: new Set(),
     pixelFilters: new Set(),
+    diagramSensor: 'S1',
     diagramFocal: '4',
     diagramPixel: '4MP',
     diagramScale: 30,
     diagramHeight: 2.8,
-    diagramTiltOverride: null, // null = use per-focal auto
-    aFocal: '6', aPixel: '4MP',
-    bFocal: '8', bPixel: '4MP',
+    diagramTiltOverride: null,
+    tableSensor: 'S1',
+    aSensor: 'S1', aFocal: '6', aPixel: '4MP',
+    bSensor: 'S1', bFocal: '8', bPixel: '4MP',
     highlightId: null
   };
+
+  // ===== Populate sensor selectors =====
+  function populateSensorSelect(selectEl, selectedId) {
+    selectEl.innerHTML = SENSORS.map(s =>
+      `<option value="${s.id}"${s.id === selectedId ? ' selected' : ''}>${s.label} ${s.note}</option>`
+    ).join('');
+  }
 
   // ===== Tabs =====
   $$('.tab').forEach(btn => {
@@ -952,18 +1041,30 @@
 
   // ===== Table =====
   function renderTable() {
-    const rows = DATA.filter(r => {
+    const sensor = getSensor(state.tableSensor);
+    const rows = [];
+    for (const f of FOCALS) {
+      for (const p of PIXELS) {
+        const r = calcRow(sensor.w, sensor.h, f, p);
+        const id = `${f}-${p}`;
+        rows.push({ id, sensor: sensor.id, focal: f, pixel: p, ...r, scenario: scenarioText(sensor.id, f, p) });
+      }
+    }
+    const filtered = rows.filter(r => {
       if (state.focalFilters.size && !state.focalFilters.has(String(r.focal))) return false;
       if (state.pixelFilters.size && !state.pixelFilters.has(r.pixel)) return false;
       return true;
     });
+    $('#table-meta').textContent = `${filtered.length} 条数据`;
     const warnIf50 = (v) => v > 50 ? `<span class="warn">${fmtInt(v)}</span>` : `<span>${fmtInt(v)}</span>`;
-    $('#data-tbody').innerHTML = rows.map(r => {
-      const isH = r.id === state.highlightId;
+    $('#data-tbody').innerHTML = filtered.map(r => {
+      const isH = r.id === state.highlightId && state.tableSensor === state.highlightSensor;
       return `<tr class="${isH ? 'highlight' : ''}" data-id="${r.id}">
+        <td>${sensor.label}</td>
         <td>${r.focal}</td>
         <td>${r.pixel}</td>
         <td>${fmt(r.hFov)}°</td>
+        <td>${fmt(r.vFov)}°</td>
         <td>${fmt(r.tilt)}°</td>
         <td>${fmt(r.blind)}</td>
         <td>${warnIf50(r.D)}</td>
@@ -977,8 +1078,10 @@
 
   // ===== Diagram =====
   function renderDiagram() {
-    const r = DATA.find(x => String(x.focal) === state.diagramFocal && x.pixel === state.diagramPixel);
-    if (!r) return;
+    const sensor = getSensor(state.diagramSensor);
+    const focal = parseFloat(state.diagramFocal);
+    const pixel = state.diagramPixel;
+    const r = calcRow(sensor.w, sensor.h, focal, pixel);
 
     const W = 900, H = 160;
     const maxDist = state.diagramScale;
@@ -991,37 +1094,34 @@
     const camX = margin.left;
     const camYM = groundY - camHeight * unit;
 
-    // Effective tilt: manual override or per-focal auto
     const effectiveTilt = state.diagramTiltOverride !== null ? state.diagramTiltOverride : r.tilt;
     const tiltRad = effectiveTilt * Math.PI / 180;
     const vFovRad = r.vFov * Math.PI / 180;
     const bottomAngle = tiltRad + vFovRad / 2;
     const topAngle = tiltRad - vFovRad / 2;
-    // Recalculate blind zone based on current H and tilt
     const blindDist = bottomAngle > 0 && bottomAngle < Math.PI / 2
       ? camHeight / Math.tan(bottomAngle)
-      : (camHeight / Math.tan(Math.PI / 2 - 0.01)); // near-vertical: very small
+      : (camHeight / Math.tan(Math.PI / 2 - 0.01));
     const blindX = camX + blindDist * unit;
 
-    // Sync tilt input and AUTO button state
     $('#diagram-tilt').value = effectiveTilt.toFixed(1);
     $('#tilt-auto').classList.toggle('manual', state.diagramTiltOverride !== null);
     $('#tilt-auto').textContent = state.diagramTiltOverride !== null ? 'MANUAL' : 'AUTO';
+    $('#hdr-sensor').textContent = sensor.label;
 
     let svg = '';
 
-    // Subtle grid
     svg += `<defs>
       <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
         <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#11161c" stroke-width="0.5"/>
       </pattern>
+      <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="6" stroke="#ff3d57" stroke-width="1" opacity="0.5"/>
+      </pattern>
     </defs>`;
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${drawW}" height="${drawH}" fill="url(#grid)"/>`;
-
-    // Outer frame
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${drawW}" height="${drawH}" fill="none" stroke="#1a2129" stroke-width="1"/>`;
 
-    // Distance ticks on ground
     const stepCount = 6;
     for (let i = 0; i <= stepCount; i++) {
       const d = (maxDist / stepCount) * i;
@@ -1030,18 +1130,12 @@
       svg += `<text x="${x}" y="${groundY + 11}" fill="#8a949e" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">${d.toFixed(0)}m</text>`;
     }
 
-    // Ground line
     svg += `<line x1="${margin.left}" y1="${groundY}" x2="${margin.left + drawW}" y2="${groundY}" stroke="#2e3845" stroke-width="1.5"/>`;
-    // Wall
     svg += `<line x1="${camX}" y1="${margin.top}" x2="${camX}" y2="${groundY}" stroke="#2e3845" stroke-width="1.5"/>`;
-    // Mount extension
     svg += `<line x1="${camX}" y1="${camYM + 6}" x2="${camX}" y2="${groundY}" stroke="#1a2129" stroke-width="1" stroke-dasharray="2,3"/>`;
-
-    // Horizon line (at camera height)
     svg += `<line x1="${camX}" y1="${camYM}" x2="${margin.left + drawW}" y2="${camYM}" stroke="#2e3845" stroke-width="1" stroke-dasharray="4,4"/>`;
     svg += `<text x="${margin.left + drawW - 6}" y="${camYM - 2}" fill="#4f5864" font-size="8" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平线</text>`;
 
-    // FOV cone edges
     const edgeLen = 75;
     const bX = camX + edgeLen * Math.cos(bottomAngle);
     const bY = camYM + edgeLen * Math.sin(bottomAngle);
@@ -1050,7 +1144,6 @@
     svg += `<line x1="${camX}" y1="${camYM}" x2="${bX}" y2="${bY}" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
     svg += `<line x1="${camX}" y1="${camYM}" x2="${tX}" y2="${tY}" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
 
-    // DORI zone bands
     const doriZones = [
       { name: 'I', color: '--I', dist: r.I },
       { name: 'R', color: '--R', dist: r.R },
@@ -1066,7 +1159,6 @@
       if (endX <= startX) continue;
       if (endX > edgeX) endX = edgeX;
       const widthX = endX - startX;
-      // Resolve CSS var to actual color
       const col = getComputedStyle(document.documentElement).getPropertyValue(z.color).trim();
       svg += `<rect x="${startX}" y="${groundY - bandH}" width="${widthX}" height="${bandH}" fill="${col}" fill-opacity="0.4"/>`;
       if (widthX > 28) {
@@ -1074,22 +1166,13 @@
       }
     }
 
-    // Blind zone (red triangle)
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="#ff3d57" fill-opacity="0.15"/>`;
-    // Hatched pattern for blind zone
-    svg += `<defs>
-      <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
-        <line x1="0" y1="0" x2="0" y2="6" stroke="#ff3d57" stroke-width="1" opacity="0.5"/>
-      </pattern>
-    </defs>`;
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
     svg += `<text x="${(camX + blindX) / 2}" y="${groundY - camHeight * unit / 2 - 2}" fill="#ff3d57" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">盲区 ${fmt(blindDist)}m</text>`;
 
-    // Center axis (tilt direction)
     const cX = camX + edgeLen * Math.cos(tiltRad);
     const cY = camYM + edgeLen * Math.sin(tiltRad);
     svg += `<line x1="${camX}" y1="${camYM}" x2="${cX}" y2="${cY}" stroke="#00d4ff" stroke-width="1.5"/>`;
-    // Tilt angle arc
     const arcR = 12;
     const aS = camX + arcR;
     const aSY = camYM;
@@ -1098,7 +1181,6 @@
     svg += `<path d="M ${aS} ${aSY} A ${arcR} ${arcR} 0 0 1 ${aE} ${aEY}" fill="none" stroke="#00d4ff" stroke-width="1.2"/>`;
     svg += `<text x="${camX + arcR + 6}" y="${camYM + arcR * 0.4 + 4}" fill="#00d4ff" font-size="11" font-weight="600" font-family="IBM Plex Mono" letter-spacing=".5">俯角 ${fmt(effectiveTilt)}°</text>`;
 
-    // DORI markers
     const doriMarkers = [
       { name: 'I', color: '#ff3d57', dist: r.I },
       { name: 'R', color: '#ff7a00', dist: r.R },
@@ -1118,28 +1200,25 @@
       }
     });
 
-    // Camera icon
     const camW = 9, camH = 5;
     svg += `<rect x="${camX - camW / 2}" y="${camYM - camH / 2}" width="${camW}" height="${camH}" fill="#00d4ff" stroke="#0a0d11" stroke-width="1"/>`;
     svg += `<polygon points="${camX + camW / 2},${camYM - 1.5} ${camX + camW / 2 + 3.5},${camYM} ${camX + camW / 2},${camYM + 1.5}" fill="#00d4ff"/>`;
-    // Height label
     svg += `<line x1="${camX - 6}" y1="${camYM}" x2="${camX - 22}" y2="${camYM}" stroke="#4f5864" stroke-width="1"/>`;
     svg += `<line x1="${camX - 6}" y1="${groundY}" x2="${camX - 22}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
     svg += `<line x1="${camX - 18}" y1="${camYM}" x2="${camX - 18}" y2="${groundY}" stroke="#4f5864" stroke-width="1"/>`;
     svg += `<text x="${camX - 24}" y="${(camYM + groundY) / 2 + 3}" fill="#8a949e" font-size="9" text-anchor="end" font-family="IBM Plex Mono">${fmt(camHeight)}m</text>`;
 
-    // Title in top-left
-    svg += `<text x="${margin.left + 6}" y="${margin.top - 6}" fill="#e8ecef" font-size="11" font-weight="600" font-family="IBM Plex Sans Condensed" letter-spacing="2">${r.focal}MM @ ${r.pixel}</text>`;
-    svg += `<text x="${margin.left + drawW - 6}" y="${margin.top - 6}" fill="#8a949e" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平 ${fmt(r.hFov)}° · 垂直 ${fmt(r.vFov)}°</text>`;
+    svg += `<text x="${margin.left + 6}" y="${margin.top - 6}" fill="#e8ecef" font-size="11" font-weight="600" font-family="IBM Plex Sans Condensed" letter-spacing="2">${sensor.label} · ${focal}MM @ ${pixel}</text>`;
+    svg += `<text x="${margin.left + drawW - 6}" y="${margin.top - 6}" fill="#8a949e" font-size="9" text-anchor="end" font-family="IBM Plex Mono" letter-spacing="1">水平 ${fmt(r.hFov)}° · 垂直 ${fmt(r.vFov)}° · 传感器 ${sensor.w}×${sensor.h}mm</text>`;
 
     $('#diagram').innerHTML = svg;
-
   }
 
   // Diagram controls
+  $('#diagram-sensor').addEventListener('change', e => { state.diagramSensor = e.target.value; renderDiagram(); });
   $('#diagram-focal').addEventListener('change', e => { state.diagramFocal = e.target.value; renderDiagram(); });
   $('#diagram-pixel').addEventListener('change', e => { state.diagramPixel = e.target.value; renderDiagram(); });
-  $('#diagram-scale').addEventListener('change', e => { state.diagramScale = parseInt(e.target.value) || 30; renderDiagram(); });
+  $('#diagram-scale').addEventListener('input', e => { state.diagramScale = parseInt(e.target.value) || 30; renderDiagram(); });
   $('#diagram-height').addEventListener('input', e => {
     const v = parseFloat(e.target.value);
     if (v >= 0.5 && v <= 10) { state.diagramHeight = v; renderDiagram(); }
@@ -1152,28 +1231,31 @@
 
   // ===== Compare =====
   function populateCompare() {
-    const focals = [2.8, 4, 6, 8, 12];
-    const pixels = ['2MP', '4MP', '8MP'];
     ['a', 'b'].forEach(prefix => {
+      populateSensorSelect($(`#compare-${prefix}-sensor`), state[prefix + 'Sensor']);
       const fSel = $(`#compare-${prefix}-focal`);
       const pSel = $(`#compare-${prefix}-pixel`);
-      fSel.innerHTML = focals.map(f => `<option value="${f}">${f}mm</option>`).join('');
-      pSel.innerHTML = pixels.map(p => `<option value="${p}">${p}</option>`).join('');
+      fSel.innerHTML = FOCALS.map(f => `<option value="${f}">${f}mm</option>`).join('');
+      pSel.innerHTML = PIXELS.map(p => `<option value="${p}">${p}</option>`).join('');
       fSel.value = state[prefix + 'Focal'];
       pSel.value = state[prefix + 'Pixel'];
+      $(`#compare-${prefix}-sensor`).addEventListener('change', e => { state[prefix + 'Sensor'] = e.target.value; renderCompare(); });
       fSel.addEventListener('change', e => { state[prefix + 'Focal'] = e.target.value; renderCompare(); });
       pSel.addEventListener('change', e => { state[prefix + 'Pixel'] = e.target.value; renderCompare(); });
     });
   }
 
   function renderCompare() {
-    const a = DATA.find(x => String(x.focal) === state.aFocal && x.pixel === state.aPixel);
-    const b = DATA.find(x => String(x.focal) === state.bFocal && x.pixel === state.bPixel);
-    if (!a || !b) return;
+    const sA = getSensor(state.aSensor);
+    const sB = getSensor(state.bSensor);
+    const a = calcRow(sA.w, sA.h, parseFloat(state.aFocal), state.aPixel);
+    const b = calcRow(sB.w, sB.h, parseFloat(state.bFocal), state.bPixel);
 
     const rows = [
-      { label: '焦距 / 像素', a: `${a.focal}mm @ ${a.pixel}`, b: `${b.focal}mm @ ${b.pixel}`, fmt: x => x, delta: false },
+      { label: '传感器', a: state.aSensor, b: state.bSensor, fmt: x => x, delta: false },
+      { label: '焦距 / 像素', a: `${state.aFocal}mm @ ${state.aPixel}`, b: `${state.bFocal}mm @ ${state.bPixel}`, fmt: x => x, delta: false },
       { label: '水平视场角', a: a.hFov, b: b.hFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
+      { label: '垂直视场角', a: a.vFov, b: b.vFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
       { label: '俯角 α', a: a.tilt, b: b.tilt, fmt: x => fmt(x) + '°', delta: true, higherBetter: false },
       { label: '盲区', a: a.blind, b: b.blind, fmt: x => fmt(x) + 'm', delta: true, higherBetter: false },
       { label: 'I · 辨识', a: a.I, b: b.I, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
@@ -1187,14 +1269,14 @@
         <th style="text-align:left">指标</th>
         <th>A</th>
         <th>B</th>
-        <th>B − A</th>
+        <th>B \u2212 A</th>
       </tr></thead>
       <tbody>${rows.map(r => {
-        let deltaCell = '<span class="delta-zero">—</span>';
+        let deltaCell = '<span class="delta-zero">\u2014</span>';
         if (r.delta) {
           const diff = r.b - r.a;
           if (Math.abs(diff) < 0.05) {
-            deltaCell = '<span class="delta-zero">≈ 0</span>';
+            deltaCell = '<span class="delta-zero">\u2248 0</span>';
           } else {
             const aBetter = r.higherBetter ? diff < 0 : diff > 0;
             const cls = aBetter ? 'delta-neg' : 'delta-pos';
@@ -1215,19 +1297,22 @@
 
   // ===== Scenarios =====
   function renderScenarios() {
-    $('#scenario-grid').innerHTML = SCENARIOS.map((s, i) => `
+    $('#scenario-grid').innerHTML = SCENARIOS.map((s, i) => {
+      const tagHtml = s.tag ? `<span class="sc-tag traffic">${s.tag}</span>` : '';
+      return `
       <div class="scenario-card" data-idx="${i}">
         <div class="sc-num">// ${String(i + 1).padStart(2, '0')}</div>
-        <div class="sc-title">${s.name}</div>
+        <div class="sc-title">${tagHtml}${s.name}</div>
         <div class="sc-config">${s.config}</div>
         <div class="sc-meta">
+          <span><span class="k">传感器</span>${getSensor(s.sensor).label}</span>
           <span><span class="k">距离</span>${s.distance}</span>
           <span><span class="k">DORI</span>${s.dori}</span>
           <span><span class="k">盲区</span>${s.blind}</span>
         </div>
         <div class="sc-note">${s.note}</div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
     $$('.scenario-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -1236,13 +1321,16 @@
         if (!m) return;
         const focal = m[1];
         const pixel = m[2];
+        state.tableSensor = sc.sensor || 'S1';
+        state.focalFilters = new Set([focal]);
+        state.pixelFilters = new Set([pixel]);
+        state.highlightId = `${focal}-${pixel}`;
+        state.highlightSensor = state.tableSensor;
         $$('.tab').forEach(b => b.classList.remove('active'));
         $$('.tab-content').forEach(c => c.classList.remove('active'));
         $('.tab[data-tab="table"]').classList.add('active');
         $('#tab-table').classList.add('active');
-        state.focalFilters = new Set([focal]);
-        state.pixelFilters = new Set([pixel]);
-        state.highlightId = `${focal}-${pixel}`;
+        populateSensorSelect($('#table-sensor'), state.tableSensor);
         $$('#filter-focal .chip').forEach(c => c.classList.toggle('active', c.dataset.value === focal));
         $$('#filter-pixel .chip').forEach(c => c.classList.toggle('active', c.dataset.value === pixel));
         renderTable();
@@ -1250,12 +1338,154 @@
     });
   }
 
+  // ===== Table sensor selector =====
+  $('#table-sensor').addEventListener('change', e => {
+    state.tableSensor = e.target.value;
+    renderTable();
+  });
+
   // ===== Init =====
+  populateSensorSelect($('#diagram-sensor'), state.diagramSensor);
+  populateSensorSelect($('#table-sensor'), state.tableSensor);
   renderTable();
   renderDiagram();
   populateCompare();
   renderCompare();
   renderScenarios();
+
+  // ===== Export =====
+  function getDiagramSvgString() {
+    const svgEl = document.getElementById('diagram');
+    const clone = svgEl.cloneNode(true);
+    const cssVars = {};
+    ['--D','--O','--R','--I','--primary','--bg','--surface','--surface-2','--border','--text','--text-2','--text-3'].forEach(v => {
+      cssVars[v] = getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+    });
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('width', '1800');
+    clone.setAttribute('height', '320');
+    const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    let cssText = '';
+    for (const [k, val] of Object.entries(cssVars)) {
+      cssText += `${k}:${val};`;
+    }
+    styleEl.textContent = `text{font-family:'IBM Plex Mono','Noto Sans SC',monospace}`;
+    clone.insertBefore(styleEl, clone.firstChild);
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('width', '100%');
+    bg.setAttribute('height', '100%');
+    bg.setAttribute('fill', cssVars['--bg'] || '#0a0d11');
+    clone.insertBefore(bg, clone.firstChild);
+    return new XMLSerializer().serializeToString(clone);
+  }
+
+  $('#export-svg').addEventListener('click', () => {
+    const svgStr = '<?xml version="1.0" encoding="UTF-8"?>\n' + getDiagramSvgString();
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const sensor = getSensor(state.diagramSensor);
+    const focal = state.diagramFocal;
+    const pixel = state.diagramPixel;
+    a.download = `DORI-${sensor.label}-${focal}mm-${pixel}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  $('#export-pdf').addEventListener('click', () => {
+    const svgStr = getDiagramSvgString();
+    const sensor = getSensor(state.diagramSensor);
+    const focal = state.diagramFocal;
+    const pixel = state.diagramPixel;
+    const r = calcRow(sensor.w, sensor.h, parseFloat(focal), pixel);
+    const canvas = document.createElement('canvas');
+    canvas.width = 1800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0a0d11';
+    ctx.fillRect(0, 0, 1800, 600);
+    const img = new Image();
+    const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const svgUrl = URL.createObjectURL(svgBlob);
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, 1800, 320);
+      ctx.fillStyle = '#e8ecef';
+      ctx.font = '600 24px sans-serif';
+      ctx.fillText(`${sensor.label} \u00B7 ${focal}mm @ ${pixel}  |  H-FOV ${r.hFov.toFixed(1)}\u00B0  V-FOV ${r.vFov.toFixed(1)}\u00B0`, 30, 380);
+      ctx.font = '14px monospace';
+      ctx.fillStyle = '#8a949e';
+      ctx.fillText(`D ${r.D.toFixed(0)}m  O ${r.O.toFixed(0)}m  R ${r.R.toFixed(0)}m  I ${r.I.toFixed(0)}m  |  \u76F2\u533A ${r.blind.toFixed(1)}m  \u4FEF\u89D2 ${r.tilt.toFixed(1)}\u00B0`, 30, 420);
+      ctx.fillText(`DUDU & Cailleach \u00B7 ${new Date().toISOString().slice(0,10)}`, 30, 460);
+      URL.revokeObjectURL(svgUrl);
+
+      const imgDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      const base64 = imgDataUrl.split(',')[1];
+      const raw = atob(base64);
+      const jpegBytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) jpegBytes[i] = raw.charCodeAt(i);
+
+      const pdfBytes = buildPdf(jpegBytes, 1800, 600);
+      const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.download = `DORI-${sensor.label}-${focal}mm-${pixel}.pdf`;
+      a.click();
+      URL.revokeObjectURL(pdfUrl);
+    };
+    img.src = svgUrl;
+  });
+
+  function strToBytes(s) {
+    return new TextEncoder().encode(s);
+  }
+
+  function buildPdf(jpegData, imgW, imgH) {
+    const pageW = Math.round(imgW * 72 / 96);
+    const pageH = Math.round(imgH * 72 / 96);
+
+    const objs = [];
+    function reg(content) { objs.push(content); return objs.length; }
+
+    const catId = reg('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
+    reg('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj');
+    reg(`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Contents 4 0 R /Resources << /XObject << /Img 5 0 R >> >> >>\nendobj`);
+    const stream = `q ${pageW} 0 0 ${pageH} 0 0 cm /Img Do Q`;
+    reg(`4 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}\nendstream\nendobj`);
+    reg(`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegData.length} >>\nstream\n`);
+
+    const chunks = [];
+    let header = '%PDF-1.4\n';
+    chunks.push(strToBytes(header));
+    const offsets = [];
+    for (let i = 0; i < objs.length; i++) {
+      if (i === 4) {
+        offsets.push(chunks.reduce((a, c) => a + c.length, 0));
+        chunks.push(strToBytes(objs[i]));
+        chunks.push(jpegData);
+        chunks.push(strToBytes('\nendstream\nendobj\n'));
+      } else {
+        offsets.push(chunks.reduce((a, c) => a + c.length, 0));
+        chunks.push(strToBytes(objs[i] + '\n'));
+      }
+    }
+
+    let xref = `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`;
+    for (const off of offsets) {
+      xref += String(off).padStart(10, '0') + ' 00000 n \n';
+    }
+    const xrefStart = chunks.reduce((a, c) => a + c.length, 0);
+    chunks.push(strToBytes(xref));
+    chunks.push(strToBytes(`trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`));
+
+    let totalLen = 0;
+    for (const c of chunks) totalLen += c.length;
+    const result = new Uint8Array(totalLen);
+    let pos = 0;
+    for (const c of chunks) { result.set(c, pos); pos += c.length; }
+    return result;
+  }
 </script>
 </body>
 </html>
