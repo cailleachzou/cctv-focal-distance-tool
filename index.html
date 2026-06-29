@@ -1101,7 +1101,7 @@
     renderDiagram();
   }
   let currentTheme = 'dark';
-  applyTheme('dark');
+  try { applyTheme('dark'); } catch(e) { document.title = 'THEME_ERR: ' + e.message; console.error(e); }
   $('#theme-toggle').addEventListener('click', () => {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     applyTheme(currentTheme);
@@ -1457,6 +1457,7 @@
   });
 
   // ===== Init =====
+  try {
   populateSensorSelect($('#diagram-sensor'), state.diagramSensor);
   populateSensorSelect($('#table-sensor'), state.tableSensor);
   renderTable();
@@ -1464,6 +1465,7 @@
   populateCompare();
   renderCompare();
   renderScenarios();
+  } catch(e) { document.title = 'ERR: ' + e.message; console.error(e); }
 
   // ===== Language =====
   function renderLang() {
