@@ -32,7 +32,7 @@ jobs:
       - name: Checkout backup
         uses: actions/checkout@v4
         with:
-          ref: backup/pre-20260629
+          ref: backup/pre-0626
           path: backup
 
       - name: Copy backup to subfolder
