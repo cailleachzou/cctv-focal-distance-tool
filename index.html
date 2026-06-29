@@ -1280,10 +1280,12 @@
     if (ubEndX > camX) {
       svg += `<polygon points="${camX},${camYM} ${ubEndX},${camYM} ${ubEndX},${ubEndY}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
       svg += `<polygon points="${camX},${camYM} ${ubEndX},${camYM} ${ubEndX},${ubEndY}" fill="url(#hatch)"/>`;
-      const ubMidX = camX + (ubEndX - camX) * 0.4;
-      const ubMidY = (camYM + camYM + (ubMidX - camX) * Math.tan(topAngle)) / 2;
-      svg += `<text x="${ubMidX}" y="${Math.min(ubMidY, camYM - 6)}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
     }
+    svg += `<rect x="${ubEndX}" y="${margin.top}" width="${farX - ubEndX}" height="${camYM - margin.top}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
+    svg += `<rect x="${ubEndX}" y="${margin.top}" width="${farX - ubEndX}" height="${camYM - margin.top}" fill="url(#hatch)"/>`;
+    const ubMidX = ubEndX < farX ? (camX + ubEndX) / 2 : (camX + farX) / 2;
+    const ubMidY = camYM - 8;
+    svg += `<text x="${ubMidX}" y="${ubMidY}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
 
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
