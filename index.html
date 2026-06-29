@@ -1269,17 +1269,16 @@
     }
 
     const farX = margin.left + drawW;
-    const upperBlindFarY = camYM + (farX - camX) * Math.tan(topAngle);
-    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperBlindFarY}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
-    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperBlindFarY}" fill="url(#hatch)"/>`;
-    const upperBlindMidX = camX + (farX - camX) * 0.4;
-    const upperBlindMidY = camYM + (upperBlindMidX - camX) * Math.tan(topAngle) / 2;
-    svg += `<text x="${upperBlindMidX}" y="${upperBlindMidY + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
+    const upperFarY = camYM + (farX - camX) * Math.tan(topAngle);
+    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperFarY}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
+    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperFarY}" fill="url(#hatch)"/>`;
+    const ubMidX = camX + (farX - camX) * 0.35;
+    const ubMidY = camYM + (ubMidX - camX) * Math.tan(topAngle) * 0.4;
+    svg += `<text x="${ubMidX}" y="${ubMidY + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
 
-    const lowerEndX = Math.min(blindX, farX);
-    svg += `<polygon points="${camX},${groundY} ${lowerEndX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
-    svg += `<polygon points="${camX},${groundY} ${lowerEndX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
-    svg += `<text x="${(camX + lowerEndX) / 2}" y="${(camYM + groundY) / 2 + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
+    svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
+    svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
+    svg += `<text x="${(camX + blindX) / 2}" y="${(camYM + groundY) / 2 + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
 
     const cX = camX + edgeLen * Math.cos(tiltRad);
     const cY = camYM + edgeLen * Math.sin(tiltRad);
