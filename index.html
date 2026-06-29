@@ -1268,15 +1268,18 @@
       }
     }
 
-    const blindAngleLen = 60;
-    const blindEndX = camX + blindAngleLen * Math.cos(topAngle);
-    const blindEndY = camYM + blindAngleLen * Math.sin(topAngle);
-    const blindHorizX = camX + blindAngleLen;
-    svg += `<polygon points="${camX},${camYM} ${blindHorizX},${camYM} ${blindEndX},${blindEndY}" fill="${cssVar('--I')}" fill-opacity="0.15"/>`;
-    svg += `<polygon points="${camX},${camYM} ${blindHorizX},${camYM} ${blindEndX},${blindEndY}" fill="url(#hatch)"/>`;
-    const blindMidAngle = topAngle / 2;
-    const blindLabelR = blindAngleLen * 0.55;
-    svg += `<text x="${camX + blindLabelR * Math.cos(blindMidAngle)}" y="${camYM + blindLabelR * Math.sin(blindMidAngle) + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
+    const farX = margin.left + drawW;
+    const upperBlindFarY = camYM + (farX - camX) * Math.tan(topAngle);
+    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperBlindFarY}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
+    svg += `<polygon points="${camX},${camYM} ${farX},${camYM} ${farX},${upperBlindFarY}" fill="url(#hatch)"/>`;
+    const upperBlindMidX = camX + (farX - camX) * 0.4;
+    const upperBlindMidY = camYM + (upperBlindMidX - camX) * Math.tan(topAngle) / 2;
+    svg += `<text x="${upperBlindMidX}" y="${upperBlindMidY + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
+
+    const lowerEndX = Math.min(blindX, farX);
+    svg += `<polygon points="${camX},${groundY} ${lowerEndX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
+    svg += `<polygon points="${camX},${groundY} ${lowerEndX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
+    svg += `<text x="${(camX + lowerEndX) / 2}" y="${(camYM + groundY) / 2 + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
 
     const cX = camX + edgeLen * Math.cos(tiltRad);
     const cY = camYM + edgeLen * Math.sin(tiltRad);
