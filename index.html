@@ -1101,7 +1101,7 @@
     renderDiagram();
   }
   let currentTheme = 'dark';
-  try { applyTheme('dark'); } catch(e) { document.title = 'THEME_ERR: ' + e.message; console.error(e); }
+  applyTheme('dark');
   $('#theme-toggle').addEventListener('click', () => {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
     applyTheme(currentTheme);
@@ -1158,7 +1158,6 @@
       if (state.pixelFilters.size && !state.pixelFilters.has(r.pixel)) return false;
       return true;
     });
-    $('#table-meta').textContent = `${filtered.length} 条数据`;
     const warnIf50 = (v) => v > 50 ? `<span class="warn">${fmtInt(v)}</span>` : `<span>${fmtInt(v)}</span>`;
     $('#data-tbody').innerHTML = filtered.map(r => {
       const isH = r.id === state.highlightId && state.tableSensor === state.highlightSensor;
@@ -1260,7 +1259,7 @@
       let endX = camX + z.dist * unit;
       if (endX <= startX) continue;
       if (endX > edgeX) endX = edgeX;
-      const widthX = endX - startX;
+      const widthX = Math.max(0, endX - startX);
       const col = getComputedStyle(document.documentElement).getPropertyValue(z.color).trim();
       svg += `<rect x="${startX}" y="${groundY - bandH}" width="${widthX}" height="${bandH}" fill="${col}" fill-opacity="0.4"/>`;
       if (widthX > 28) {
@@ -1457,7 +1456,6 @@
   });
 
   // ===== Init =====
-  try {
   populateSensorSelect($('#diagram-sensor'), state.diagramSensor);
   populateSensorSelect($('#table-sensor'), state.tableSensor);
   renderTable();
@@ -1465,7 +1463,6 @@
   populateCompare();
   renderCompare();
   renderScenarios();
-  } catch(e) { document.title = 'ERR: ' + e.message; console.error(e); }
 
   // ===== Language =====
   function renderLang() {
