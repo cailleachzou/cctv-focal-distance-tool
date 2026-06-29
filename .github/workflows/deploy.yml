@@ -2,7 +2,7 @@ name: Deploy Multi-Branch Pages
 
 on:
   push:
-    branches: [main, backup/pre-20260629]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
