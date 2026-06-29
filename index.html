@@ -622,13 +622,14 @@
   <header>
     <div>
       <div class="header-title">焦距<span class="x">×</span>像素<span class="x">×</span>距离</div>
-      <div class="header-sub">摄像机选型参考 · 焦距 / 像素 / 传感器 / 距离</div>
+      <div class="header-sub" id="hdr-sub">摄像机选型参考 · 焦距 / 像素 / 传感器 / 距离</div>
     </div>
     <div class="header-meta">
       <div><span class="k">传感器</span><span class="v" id="hdr-sensor">1/2.8"</span></div>
       <div><span class="k">安装高</span><span class="v">2.8m</span></div>
       <div><span class="k">标准</span><span class="v">IEC 62676-4</span></div>
       <div><span class="k">版本</span><span class="v">1.1</span></div>
+      <div style="margin-top:6px;"><span class="lang-toggle" id="lang-cn" style="cursor:pointer;color:var(--primary)">CN</span> <span style="color:var(--text-3)">|</span> <span class="lang-toggle" id="lang-en" style="cursor:pointer;color:var(--text-3)">EN</span></div>
     </div>
   </header>
 
@@ -858,18 +859,18 @@
       <table>
         <thead>
           <tr>
-            <th>传感器</th>
-            <th>焦距</th>
-            <th>像素</th>
+            <th id="th-sensor">传感器</th>
+            <th id="th-focal">焦距</th>
+            <th id="th-pixel">像素</th>
             <th>H-FOV</th>
             <th>V-FOV</th>
-            <th>俯角</th>
-            <th>盲区</th>
+            <th id="th-tilt">俯角</th>
+            <th id="th-blind">盲区</th>
             <th><span class="dori-dot" style="background:var(--D)"></span>D</th>
             <th><span class="dori-dot" style="background:var(--O)"></span>O</th>
             <th><span class="dori-dot" style="background:var(--R)"></span>R</th>
             <th><span class="dori-dot" style="background:var(--I)"></span>I</th>
-            <th>适配场景</th>
+            <th id="th-scen">适配场景</th>
           </tr>
         </thead>
         <tbody id="data-tbody"></tbody>
@@ -887,16 +888,16 @@
     </div>
     <div class="compare-grid">
       <div class="compare-col">
-        <div class="compare-col-head"><span>配置 A</span><span class="marker">A</span></div>
-        <div class="row"><label>传感器</label><select id="compare-a-sensor"></select></div>
-        <div class="row"><label>焦距</label><select id="compare-a-focal"></select></div>
-        <div class="row"><label>像素</label><select id="compare-a-pixel"></select></div>
+        <div class="compare-col-head"><span id="comp-a-label">配置 A</span><span class="marker">A</span></div>
+        <div class="row"><label class="comp-sel-label">传感器</label><select id="compare-a-sensor"></select></div>
+        <div class="row"><label class="comp-sel-label">焦距</label><select id="compare-a-focal"></select></div>
+        <div class="row"><label class="comp-sel-label">像素</label><select id="compare-a-pixel"></select></div>
       </div>
       <div class="compare-col">
-        <div class="compare-col-head"><span>配置 B</span><span class="marker">B</span></div>
-        <div class="row"><label>传感器</label><select id="compare-b-sensor"></select></div>
-        <div class="row"><label>焦距</label><select id="compare-b-focal"></select></div>
-        <div class="row"><label>像素</label><select id="compare-b-pixel"></select></div>
+        <div class="compare-col-head"><span id="comp-b-label">配置 B</span><span class="marker">B</span></div>
+        <div class="row"><label class="comp-sel-label">传感器</label><select id="compare-b-sensor"></select></div>
+        <div class="row"><label class="comp-sel-label">焦距</label><select id="compare-b-focal"></select></div>
+        <div class="row"><label class="comp-sel-label">像素</label><select id="compare-b-pixel"></select></div>
       </div>
     </div>
     <div class="compare-result" id="compare-result"></div>
@@ -926,6 +927,93 @@
   const PIXELS = ['2MP', '4MP', '8MP'];
   const H_RES = { '2MP': 1920, '4MP': 2560, '8MP': 3840 };
   const TILT_RECOMMEND = { 2.8: 29.2, 4: 19.3, 6: 10.6, 8: 8.0, 12: 5.3 };
+
+  const SENSOR_NOTES = { cn: ['入门级半球','主流 IP 摄像机','中端枪机','部分变焦一体机','中高端枪机','高端枪机/PTZ','专业级/星光级','广播级/工业级'], en: ['Entry dome','Mainstream IP','Mid-range bullet','Varifocal','High-mid bullet','High-end / PTZ','Pro / Starlight','Broadcast / Industrial'] };
+  const SCENARIO_DATA = [
+    { nameCn: '电梯厅（5m \u00D7 5m）', nameEn: 'Elevator Hall (5m \u00D7 5m)', dist: '0-5m', dori: 'R', cfg: '2.8mm @ 4MP', sid: 1, blind: '1.4m', noteCn: '广角全覆盖，盲区可忽略', noteEn: 'Wide-angle full coverage, negligible blind zone' },
+    { nameCn: '标准走道（5m \u00D7 30m）', nameEn: 'Corridor (5m \u00D7 30m)', dist: '0-25m', dori: 'O', cfg: '4mm @ 2MP', sid: 1, blind: '2.8m', noteCn: '走道两端兼顾，性价比高', noteEn: 'Covers both ends, cost-effective' },
+    { nameCn: '大堂 / 前台（10m \u00D7 10m）', nameEn: 'Lobby / Reception (10m \u00D7 10m)', dist: '0-10m', dori: 'R', cfg: '2.8mm @ 4MP', sid: 1, blind: '1.4m', noteCn: '广角 + 中高像素', noteEn: 'Wide-angle + mid-high resolution' },
+    { nameCn: '收银台（5m \u00D7 3m）', nameEn: 'Cashier (5m \u00D7 3m)', dist: '0-4m', dori: 'I', cfg: '4mm @ 4MP', sid: 1, blind: '2.8m', noteCn: '需要 I 级辨认钞票 / 人脸细节', noteEn: 'Requires I-level detail for bills / face' },
+    { nameCn: '停车场出入口（抓车牌）', nameEn: 'Parking Entrance (plate capture)', dist: '8-15m', dori: 'R', cfg: '6mm @ 4MP', sid: 1, blind: '5.2m', noteCn: '邻杆补盲，覆盖车牌宽度', noteEn: 'Adjacent pole补盲, covers plate width' },
+    { nameCn: '园区周界（短距）', nameEn: 'Perimeter (short range)', dist: '0-30m', dori: 'O', cfg: '6mm @ 4MP', sid: 1, blind: '5.2m', noteCn: '50m 间距立杆', noteEn: '50m pole spacing' },
+    { nameCn: '道路卡口', nameEn: 'Road Checkpoint', dist: '15-30m', dori: 'R', cfg: '12mm @ 4MP', sid: 1, blind: '10.9m', noteCn: '正下方完全盲，需低位补点', noteEn: 'Blind directly below, needs low补point' },
+    { nameCn: '高速公路卡口', nameEn: 'Highway Checkpoint', dist: '15-30m', dori: 'R-I', cfg: '8mm @ 8MP', sid: 5, blind: '7.1m', noteCn: '车牌识别 + 车内人脸，快门 \u2265 1/1000s', noteEn: 'Plate + in-car face, shutter \u2265 1/1000s', tag: 'traffic' },
+    { nameCn: '城市隧道', nameEn: 'Urban Tunnel', dist: '10-25m', dori: 'R-I', cfg: '6mm @ 8MP', sid: 5, blind: '5.2m', noteCn: '低照度 + 补光，需宽动态', noteEn: 'Low-light +补光, needs WDR', tag: 'traffic' },
+    { nameCn: '城市十字路口', nameEn: 'Urban Intersection', dist: '15-40m', dori: 'R-I', cfg: '8mm @ 4MP', sid: 5, blind: '7.1m', noteCn: '多车道覆盖，红绿灯状态联动', noteEn: 'Multi-lane coverage, traffic light联动', tag: 'traffic' },
+    { nameCn: '公交专用道', nameEn: 'Bus Lane', dist: '10-20m', dori: 'R', cfg: '6mm @ 4MP', sid: 1, blind: '5.2m', noteCn: '连续覆盖，需防抖', noteEn: 'Continuous coverage, needs防抖', tag: 'traffic' }
+  ];
+  const SCENARIOS = SCENARIO_DATA.map(s => ({ name: s.nameCn, distance: s.dist, dori: s.dori, config: s.cfg, sensor: SENSORS[s.sid].id, blind: s.blind, note: s.noteCn }));
+
+  let lang = 'cn';
+  const L = {
+    cn: {
+      sub: '摄像机选型参考 \u00B7 焦距 / 像素 / 传感器 / 距离',
+      sensor: '传感器', mountH: '安装高', std: '标准', ver: '版本',
+      t1: '视场角分析', t2: '部署模板', t3: '数据矩阵', t4: '并排对比',
+      secMeta1: '侧视图 \u00B7 传感器 / 高度 / 俯角可调',
+      secMeta2: '11 个预设 \u00B7 点击加载',
+      secMeta3: '数据 \u00B7 传感器切换重算',
+      secMeta4: 'A / B 差值 \u00B7 支持跨传感器对比',
+      focal: '焦距', pixel: '像素', dispDist: '显示距离 (m)', ht: '高度 (m)', tilt: '俯角',
+      horizon: '水平线', blindZ: '盲区',
+      dTitle: 'DORI 四维详解', dSub: 'IEC 62676-4 \u00B7 像素密度判据',
+      dSee: '看到', dTyp: '典型', dEx: '场景',
+      dDetect: '探测', dObs: '观察', dRec: '识别', dId: '辨识',
+      dDetectS: '画面里有东西在动', dTypDetect: '周界入侵 \u00B7 车辆出入 \u00B7 人数统计',
+      dExDetect: '能看出"有人走过"或"有车开进来"，但分不清男女老少、什么车型',
+      dObsS: '行为、姿态、衣着颜色', dTypObs: '行为分析 \u00B7 跌倒检测 \u00B7 客流统计',
+      dExObs: '能看出"老人摔倒在走廊"或"有人在推购物车"，但认不出脸',
+      dRecS: '人脸特征 \u00B7 衣着细节 \u00B7 清晰车牌', dTypRec: '人脸抓拍 \u00B7 辅助车牌识别 \u00B7 陌生人预警',
+      dExRec: '能认出"这是熟人张三"或清晰读出车牌号，可作事后追溯证据',
+      dIdS: '可用于入库比对的细节', dTypId: '人脸识别门禁 \u00B7 刑事取证 \u00B7 身份核验',
+      dExId: '人脸特征可入库识别系统比对、可信度高；相当于身份证照片的清晰度',
+      dMnem: '记忆口诀', dTip: '选型提示',
+      mnText: 'D 有人 \u00B7 O 在干啥 \u00B7 R 是谁 \u00B7 I 系统能认',
+      tipText: '人脸识别门禁取 I \u00B7 出入口取证取 R \u00B7 行为分析取 O \u00B7 周界报警取 D',
+      fSensor: '传感器', fFocal: '焦距', fPixel: '像素', reset: '重置',
+      thSensor: '传感器', thFocal: '焦距', thPixel: '像素', thHFov: 'H-FOV', thVFov: 'V-FOV',
+      thTilt: '俯角', thBlind: '盲区', thScen: '适配场景',
+      cA: '配置 A', cB: '配置 B', cInd: '指标', cDelta: 'B \u2212 A',
+      cFP: '焦距 / 像素', cHFOV: '水平视场角', cVFOV: '垂直视场角',
+      cTilt: '俯角 \u03B1', cBlind: '盲区',
+      cI: 'I \u00B7 辨识', cR: 'R \u00B7 识别', cO: 'O \u00B7 观察', cD: 'D \u00B7 探测',
+      fData: '数据来源：IEC 62676-4 DORI / 海康 / 大华 / 宇视',
+    },
+    en: {
+      sub: 'Camera Selection Reference \u00B7 Focal / Pixel / Sensor / Distance',
+      sensor: 'Sensor', mountH: 'Height', std: 'Standard', ver: 'Version',
+      t1: 'FOV Analysis', t2: 'Deployment', t3: 'Data Matrix', t4: 'Comparison',
+      secMeta1: 'Side View \u00B7 Sensor / Height / Tilt Adjustable',
+      secMeta2: '11 Presets \u00B7 Click to Load',
+      secMeta3: 'Data \u00B7 Switch sensor to recalculate',
+      secMeta4: 'A / B Delta \u00B7 Cross-sensor comparison',
+      focal: 'Focal', pixel: 'Pixel', dispDist: 'Display Dist (m)', ht: 'Height (m)', tilt: 'Tilt',
+      horizon: 'Horizon', blindZ: 'Blind',
+      dTitle: 'DORI Four Levels', dSub: 'IEC 62676-4 \u00B7 Pixel Density',
+      dSee: 'See', dTyp: 'Typical', dEx: 'Scenario',
+      dDetect: 'Detection', dObs: 'Observation', dRec: 'Recognition', dId: 'Identification',
+      dDetectS: 'Something moving in frame', dTypDetect: 'Perimeter intrusion \u00B7 Vehicle access \u00B7 People counting',
+      dExDetect: 'Can tell "someone walked by" or "a car entered", but cannot tell gender, age, or vehicle type',
+      dObsS: 'Behavior, posture, clothing color', dTypObs: 'Behavior analysis \u00B7 Fall detection \u00B7 Traffic counting',
+      dExObs: 'Can tell "elderly fell in corridor" or "someone pushing cart", but cannot recognize face',
+      dRecS: 'Face features \u00B7 Clothing details \u00B7 Clear plate', dTypRec: 'Face capture \u00B7 Plate recognition \u00B7 Stranger alert',
+      dExRec: 'Can recognize acquaintance or read plate clearly, usable as post-incident evidence',
+      dIdS: 'Details for database matching', dTypId: 'Face access control \u00B7 Criminal evidence \u00B7 Identity verify',
+      dExId: 'Face features matchable in recognition systems; equivalent to ID photo clarity',
+      dMnem: 'Mnemonic', dTip: 'Selection Tip',
+      mnText: 'D: someone there \u00B7 O: what doing \u00B7 R: who is it \u00B7 I: system recognizes',
+      tipText: 'Face access \u2192 I \u00B7 Entrance evidence \u2192 R \u00B7 Behavior \u2192 O \u00B7 Perimeter \u2192 D',
+      fSensor: 'Sensor', fFocal: 'Focal', fPixel: 'Pixel', reset: 'Reset',
+      thSensor: 'Sensor', thFocal: 'Focal', thPixel: 'Pixel', thHFov: 'H-FOV', thVFov: 'V-FOV',
+      thTilt: 'Tilt', thBlind: 'Blind', thScen: 'Scenario',
+      cA: 'Config A', cB: 'Config B', cInd: 'Indicator', cDelta: 'B \u2212 A',
+      cFP: 'Focal / Pixel', cHFOV: 'Horizontal FOV', cVFOV: 'Vertical FOV',
+      cTilt: 'Tilt \u03B1', cBlind: 'Blind Zone',
+      cI: 'I \u00B7 Ident', cR: 'R \u00B7 Recog', cO: 'O \u00B7 Obs', cD: 'D \u00B7 Detect',
+      fData: 'Data: IEC 62676-4 DORI / Hikvision / Dahua / Uniview',
+    }
+  };
+  function t(k) { return L[lang][k] || k; }
 
   // ===== Computation Engine =====
   function calcRow(sensorW, sensorH, focal, pixel) {
@@ -960,21 +1048,6 @@
     return '长焦远距 / 道路卡口';
   }
 
-  // ===== Data =====
-  const SCENARIOS = [
-    { name: '电梯厅（5m × 5m）', distance: '0-5m', dori: 'R', config: '2.8mm @ 4MP', sensor: 'S1', blind: '1.4m', note: '广角全覆盖，盲区可忽略' },
-    { name: '标准走道（5m × 30m）', distance: '0-25m', dori: 'O', config: '4mm @ 2MP', sensor: 'S1', blind: '2.8m', note: '走道两端兼顾，性价比高' },
-    { name: '大堂 / 前台（10m × 10m）', distance: '0-10m', dori: 'R', config: '2.8mm @ 4MP', sensor: 'S1', blind: '1.4m', note: '广角 + 中高像素' },
-    { name: '收银台（5m × 3m）', distance: '0-4m', dori: 'I', config: '4mm @ 4MP', sensor: 'S1', blind: '2.8m', note: '需要 I 级辨认钞票 / 人脸细节' },
-    { name: '停车场出入口（抓车牌）', distance: '8-15m', dori: 'R', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '邻杆补盲，覆盖车牌宽度' },
-    { name: '园区周界（短距）', distance: '0-30m', dori: 'O', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '50m 间距立杆' },
-    { name: '道路卡口', distance: '15-30m', dori: 'R', config: '12mm @ 4MP', sensor: 'S1', blind: '10.9m', note: '正下方完全盲，需低位补点' },
-    { name: '高速公路卡口', distance: '15-30m', dori: 'R-I', config: '8mm @ 8MP', sensor: 'S5', blind: '7.1m', note: '车牌识别 + 车内人脸，快门 \u2265 1/1000s', tag: 'traffic' },
-    { name: '城市隧道', distance: '10-25m', dori: 'R-I', config: '6mm @ 8MP', sensor: 'S5', blind: '5.2m', note: '低照度 + 补光，需宽动态', tag: 'traffic' },
-    { name: '城市十字路口', distance: '15-40m', dori: 'R-I', config: '8mm @ 4MP', sensor: 'S5', blind: '7.1m', note: '多车道覆盖，红绿灯状态联动', tag: 'traffic' },
-    { name: '公交专用道', distance: '10-20m', dori: 'R', config: '6mm @ 4MP', sensor: 'S1', blind: '5.2m', note: '连续覆盖，需防抖', tag: 'traffic' }
-  ];
-
   // ===== Helpers =====
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
@@ -999,8 +1072,9 @@
 
   // ===== Populate sensor selectors =====
   function populateSensorSelect(selectEl, selectedId) {
-    selectEl.innerHTML = SENSORS.map(s =>
-      `<option value="${s.id}"${s.id === selectedId ? ' selected' : ''}>${s.label} ${s.note}</option>`
+    const notes = SENSOR_NOTES[lang];
+    selectEl.innerHTML = SENSORS.map((s, i) =>
+      `<option value="${s.id}"${s.id === selectedId ? ' selected' : ''}>${s.label} ${notes[i]}</option>`
     ).join('');
   }
 
@@ -1252,24 +1326,24 @@
     const b = calcRow(sB.w, sB.h, parseFloat(state.bFocal), state.bPixel);
 
     const rows = [
-      { label: '传感器', a: state.aSensor, b: state.bSensor, fmt: x => x, delta: false },
-      { label: '焦距 / 像素', a: `${state.aFocal}mm @ ${state.aPixel}`, b: `${state.bFocal}mm @ ${state.bPixel}`, fmt: x => x, delta: false },
-      { label: '水平视场角', a: a.hFov, b: b.hFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
-      { label: '垂直视场角', a: a.vFov, b: b.vFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
-      { label: '俯角 α', a: a.tilt, b: b.tilt, fmt: x => fmt(x) + '°', delta: true, higherBetter: false },
-      { label: '盲区', a: a.blind, b: b.blind, fmt: x => fmt(x) + 'm', delta: true, higherBetter: false },
-      { label: 'I · 辨识', a: a.I, b: b.I, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
-      { label: 'R · 识别', a: a.R, b: b.R, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
-      { label: 'O · 观察', a: a.O, b: b.O, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
-      { label: 'D · 探测', a: a.D, b: b.D, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true }
+      { label: t('fSensor'), a: state.aSensor, b: state.bSensor, fmt: x => x, delta: false },
+      { label: t('cFP'), a: `${state.aFocal}mm @ ${state.aPixel}`, b: `${state.bFocal}mm @ ${state.bPixel}`, fmt: x => x, delta: false },
+      { label: t('cHFOV'), a: a.hFov, b: b.hFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
+      { label: t('cVFOV'), a: a.vFov, b: b.vFov, fmt: x => fmt(x) + '°', delta: true, higherBetter: true },
+      { label: t('cTilt'), a: a.tilt, b: b.tilt, fmt: x => fmt(x) + '°', delta: true, higherBetter: false },
+      { label: t('cBlind'), a: a.blind, b: b.blind, fmt: x => fmt(x) + 'm', delta: true, higherBetter: false },
+      { label: t('cI'), a: a.I, b: b.I, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: t('cR'), a: a.R, b: b.R, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: t('cO'), a: a.O, b: b.O, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true },
+      { label: t('cD'), a: a.D, b: b.D, fmt: x => fmtInt(x) + 'm', delta: true, higherBetter: true }
     ];
 
     const html = `<table>
       <thead><tr>
-        <th style="text-align:left">指标</th>
+        <th style="text-align:left">${t('cInd')}</th>
         <th>A</th>
         <th>B</th>
-        <th>B \u2212 A</th>
+        <th>${t('cDelta')}</th>
       </tr></thead>
       <tbody>${rows.map(r => {
         let deltaCell = '<span class="delta-zero">\u2014</span>';
@@ -1297,31 +1371,33 @@
 
   // ===== Scenarios =====
   function renderScenarios() {
-    $('#scenario-grid').innerHTML = SCENARIOS.map((s, i) => {
+    $('#scenario-grid').innerHTML = SCENARIO_DATA.map((s, i) => {
       const tagHtml = s.tag ? `<span class="sc-tag traffic">${s.tag}</span>` : '';
+      const name = lang === 'en' ? s.nameEn : s.nameCn;
+      const note = lang === 'en' ? s.noteEn : s.noteCn;
       return `
       <div class="scenario-card" data-idx="${i}">
         <div class="sc-num">// ${String(i + 1).padStart(2, '0')}</div>
-        <div class="sc-title">${tagHtml}${s.name}</div>
-        <div class="sc-config">${s.config}</div>
+        <div class="sc-title">${tagHtml}${name}</div>
+        <div class="sc-config">${s.cfg}</div>
         <div class="sc-meta">
-          <span><span class="k">传感器</span>${getSensor(s.sensor).label}</span>
-          <span><span class="k">距离</span>${s.distance}</span>
+          <span><span class="k">${t('fSensor')}</span>${getSensor(SENSORS[s.sid].id).label}</span>
+          <span><span class="k">${lang==='en'?'Distance':'距离'}</span>${s.dist}</span>
           <span><span class="k">DORI</span>${s.dori}</span>
-          <span><span class="k">盲区</span>${s.blind}</span>
+          <span><span class="k">${t('blindZ')}</span>${s.blind}</span>
         </div>
-        <div class="sc-note">${s.note}</div>
+        <div class="sc-note">${note}</div>
       </div>`;
     }).join('');
 
     $$('.scenario-card').forEach(card => {
       card.addEventListener('click', () => {
-        const sc = SCENARIOS[parseInt(card.dataset.idx)];
-        const m = sc.config.match(/^([\d.]+)mm\s*@\s*(2MP|4MP|8MP)$/);
+        const sc = SCENARIO_DATA[parseInt(card.dataset.idx)];
+        const m = sc.cfg.match(/^([\d.]+)mm\s*@\s*(2MP|4MP|8MP)$/);
         if (!m) return;
         const focal = m[1];
         const pixel = m[2];
-        state.tableSensor = sc.sensor || 'S1';
+        state.tableSensor = SENSORS[sc.sid].id || 'S1';
         state.focalFilters = new Set([focal]);
         state.pixelFilters = new Set([pixel]);
         state.highlightId = `${focal}-${pixel}`;
@@ -1352,6 +1428,79 @@
   populateCompare();
   renderCompare();
   renderScenarios();
+
+  // ===== Language =====
+  function renderLang() {
+    $('#hdr-sub').textContent = t('sub');
+    $$('.tab')[0].innerHTML = `<span class="num">01</span>${t('t1')}`;
+    $$('.tab')[1].innerHTML = `<span class="num">02</span>${t('t2')}`;
+    $$('.tab')[2].innerHTML = `<span class="num">03</span>${t('t3')}`;
+    $$('.tab')[3].innerHTML = `<span class="num">04</span>${t('t4')}`;
+    $$('.section-meta')[0].textContent = t('secMeta1');
+    $$('.section-meta')[1].textContent = t('secMeta2');
+    $$('.section-meta')[2].textContent = t('secMeta3');
+    $$('.section-meta')[3].textContent = t('secMeta4');
+    $$('.ctrl-label')[0].textContent = t('fSensor');
+    $$('.ctrl-label')[1].textContent = t('focal');
+    $$('.ctrl-label')[2].textContent = t('pixel');
+    $$('.ctrl-label')[3].textContent = t('dispDist');
+    $$('.ctrl-label')[4].textContent = t('ht');
+    $$('.ctrl-label')[5].textContent = t('tilt');
+    populateSensorSelect($('#diagram-sensor'), state.diagramSensor);
+    populateSensorSelect($('#table-sensor'), state.tableSensor);
+    $$('.filter-label')[0].textContent = t('fSensor');
+    $$('.filter-label')[1].textContent = t('fFocal');
+    $$('.filter-label')[2].textContent = t('fPixel');
+    $('#reset-filters').textContent = t('reset');
+    renderDoriCards();
+    $('#th-sensor').textContent = t('thSensor');
+    $('#th-focal').textContent = t('thFocal');
+    $('#th-pixel').textContent = t('thPixel');
+    $('#th-tilt').textContent = t('thTilt');
+    $('#th-blind').textContent = t('thBlind');
+    $('#th-scen').textContent = t('thScen');
+    $('#comp-a-label').textContent = t('cA');
+    $('#comp-b-label').textContent = t('cB');
+    $$('.comp-sel-label').forEach(el => {
+      const txt = el.textContent;
+      if (txt === '传感器' || txt === 'Sensor') el.textContent = t('fSensor');
+      else if (txt === '焦距' || txt === 'Focal') el.textContent = t('focal');
+      else if (txt === '像素' || txt === 'Pixel') el.textContent = t('pixel');
+    });
+    renderTable();
+    renderDiagram();
+    renderCompare();
+    renderScenarios();
+    renderFooter();
+  }
+  function renderDoriCards() {
+    const cards = $$('.dori-card');
+    const keys = [['dDetect','dDetectS','dTypDetect','dExDetect'],['dObs','dObsS','dTypObs','dExObs'],['dRec','dRecS','dTypRec','dExRec'],['dId','dIdS','dTypId','dExId']];
+    cards.forEach((card, i) => {
+      const k = keys[i];
+      card.querySelector('.dori-name').textContent = t(k[0]);
+      card.querySelectorAll('.dori-row-text')[0].textContent = t(k[1]);
+      card.querySelectorAll('.dori-row-text')[1].textContent = t(k[2]);
+      card.querySelectorAll('.dori-row-text')[2].textContent = t(k[3]);
+    });
+    $$('.dori-row-label').forEach(el => {
+      const txt = el.textContent;
+      if (txt === '看到' || txt === 'See') el.textContent = t('dSee');
+      else if (txt === '典型' || txt === 'Typical') el.textContent = t('dTyp');
+      else if (txt === '场景' || txt === 'Scenario') el.textContent = t('dEx');
+    });
+    $$('.dori-head-title')[0].textContent = t('dTitle');
+    $$('.dori-head-sub')[0].textContent = t('dSub');
+    $$('.dori-foot b')[0].textContent = t('dMnem');
+    $$('.dori-foot span')[0].innerHTML = `<b>${t('dMnem')}</b>${t('mnText')}`;
+    $$('.dori-foot span')[1].innerHTML = `<b>${t('dTip')}</b>${t('tipText')}`;
+  }
+  function renderFooter() {
+    $('footer span').textContent = t('fData');
+  }
+
+  $('#lang-cn').addEventListener('click', () => { lang = 'cn'; $('#lang-cn').style.color = 'var(--primary)'; $('#lang-en').style.color = 'var(--text-3)'; renderLang(); });
+  $('#lang-en').addEventListener('click', () => { lang = 'en'; $('#lang-en').style.color = 'var(--primary)'; $('#lang-cn').style.color = 'var(--text-3)'; renderLang(); });
 
   // ===== Export =====
   function getDiagramSvgString() {
