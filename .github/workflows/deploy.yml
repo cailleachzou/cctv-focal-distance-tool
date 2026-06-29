@@ -1,0 +1,56 @@
+name: Deploy Multi-Branch Pages
+
+on:
+  push:
+    branches: [main, backup/pre-20260629]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Copy main files
+        run: |
+          mkdir -p _site
+          cp -r .gitignore index.html LICENSE README.md _site/ 2>/dev/null || true
+          cp -r "焦距像素距离对照表.md" _site/ 2>/dev/null || true
+
+      - name: Checkout backup
+        uses: actions/checkout@v4
+        with:
+          ref: backup/pre-20260629
+          path: backup
+
+      - name: Copy backup to subfolder
+        run: |
+          mkdir -p _site/pre-20260629
+          cp -r backup/.gitignore backup/index.html backup/LICENSE backup/README.md _site/pre-20260629/ 2>/dev/null || true
+          cp -r "backup/焦距像素距离对照表.md" _site/pre-20260629/ 2>/dev/null || true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
