@@ -651,6 +651,175 @@
     .compare-grid { grid-template-columns: 1fr; }
     .tabs { overflow-x: auto; }
   }
+
+  /* ===== CAD Section ===== */
+  .cad-section {
+    padding: 0;
+  }
+  .cad-intro {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+  .cad-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-bottom: 24px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .cad-feature-card {
+    background: var(--surface);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .cad-feature-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .cad-feature-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .cad-feature-desc {
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+  .cad-files {
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .cad-files-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cad-files-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+  .cad-github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    text-decoration: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: background .12s, color .12s;
+  }
+  .cad-github-link:hover {
+    background: var(--primary);
+    color: var(--bg);
+  }
+  .cad-file-list {
+    padding: 16px 20px;
+  }
+  .cad-file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cad-file-item:last-child {
+    border-bottom: none;
+  }
+  .cad-file-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+  .cad-file-name {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .cad-file-desc {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-left: auto;
+  }
+  .cad-dxf-grid {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .cad-dxf-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cad-dxf-title {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+  .cad-dxf-table {
+    padding: 16px 20px;
+    overflow-x: auto;
+  }
+  .cad-dxf-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .cad-dxf-table th,
+  .cad-dxf-table td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .cad-dxf-table th {
+    background: var(--surface-2);
+    color: var(--text-3);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+  .cad-dxf-table tbody tr:hover {
+    background: var(--surface-2);
+  }
+  .cad-dxf-table .dxf-focal { color: var(--primary); font-weight: 600; }
+  .cad-dxf-table .dxf-pixel { color: var(--text); }
+  .cad-dxf-table .dxf-sensor { color: var(--text-2); }
+  .cad-dxf-table .dxf-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: .5px;
+  }
+  .cad-dxf-table .dxf-link:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 900px) {
+    .cad-features { grid-template-columns: 1fr; }
+    .cad-file-desc { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -672,6 +841,7 @@
     <button class="tab" data-tab="scenario"><span class="num">02</span>部署模板</button>
     <button class="tab" data-tab="table"><span class="num">03</span>数据矩阵</button>
     <button class="tab" data-tab="compare"><span class="num">04</span>并排对比</button>
+    <button class="tab" data-tab="cad"><span class="num">05</span>CAD图例</button>
   </nav>
 
   <!-- ============ Tab 1: 视场角分析 ============ -->
@@ -913,6 +1083,73 @@
     <div class="compare-result" id="compare-result"></div>
   </section>
 
+  <!-- ============ Tab 5: CAD图例 ============ -->
+  <section id="tab-cad" class="tab-content">
+    <div class="cad-section">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <span class="section-title" id="cad-title">CAD 平面动态块</span>
+        <span class="section-rule"></span>
+        <span class="section-meta" id="cad-meta">AutoCAD DWG · 可调参数</span>
+      </div>
+
+      <div class="cad-intro">
+        <p id="cad-intro-text">基于本工具计算数据，生成的 AutoCAD 摄像机覆盖范围平面图动态块。可直接插入 CAD 方案图纸，支持调整焦距、像素、传感器、安装高度等参数。</p>
+      </div>
+
+      <div class="cad-features">
+        <div class="cad-feature-card">
+          <div class="cad-feature-icon">📐</div>
+          <div class="cad-feature-title" id="cad-f1-title">动态块</div>
+          <div class="cad-feature-desc" id="cad-f1-desc">AutoCAD 参数化动态块，支持夹点调整视场范围和覆盖距离</div>
+        </div>
+        <div class="cad-feature-card">
+          <div class="cad-feature-icon">🔄</div>
+          <div class="cad-feature-title" id="cad-f2-title">DORI 分层</div>
+          <div class="cad-feature-desc" id="cad-f2-desc">平面图按 DORI 四级标准分色显示，I/R/O/D 一目了然</div>
+        </div>
+        <div class="cad-feature-card">
+          <div class="cad-feature-icon">📦</div>
+          <div class="cad-feature-title" id="cad-f3-title">批量输出</div>
+          <div class="cad-feature-desc" id="cad-f3-desc">预生成 15 种配置（4焦距×3像素×1传感器）的 DXF 文件</div>
+        </div>
+      </div>
+
+      <div class="cad-files">
+        <div class="cad-files-header">
+          <span class="cad-files-title" id="cad-files-title">文件清单</span>
+          <a href="https://github.com/cailleachzou/cctv-focal-distance-tool/tree/main/杂物" target="_blank" class="cad-github-link">
+            <span id="cad-github-text">GitHub 查看</span> ↗
+          </a>
+        </div>
+        <div class="cad-file-list">
+          <div class="cad-file-item">
+            <span class="cad-file-icon">📦</span>
+            <span class="cad-file-name">摄像机平面动态块.dwg</span>
+            <span class="cad-file-desc" id="cad-fd1">参数化动态块，支持夹点调整</span>
+          </div>
+          <div class="cad-file-item">
+            <span class="cad-file-icon">📋</span>
+            <span class="cad-file-name">案例.dwg</span>
+            <span class="cad-file-desc" id="cad-fd2">实际项目应用示例</span>
+          </div>
+          <div class="cad-file-item">
+            <span class="cad-file-icon">📁</span>
+            <span class="cad-file-name">cctv-cad-output/</span>
+            <span class="cad-file-desc" id="cad-fd3">15 个预生成 DXF 文件</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cad-dxf-grid">
+        <div class="cad-dxf-header">
+          <span class="cad-dxf-title" id="cad-dxf-title">预生成 DXF 文件</span>
+        </div>
+        <div class="cad-dxf-table" id="cad-dxf-table"></div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <span>数据来源：IEC 62676-4 DORI / 海康 / 大华 / 宇视</span>
     <span>DUDU &amp; Cailleach<span class="dot">·</span>2026-06-29</span>
@@ -959,11 +1196,20 @@
     cn: {
       sub: '摄像机选型参考 \u00B7 焦距 / 像素 / 传感器 / 距离',
       sensor: '传感器', mountH: '安装高', std: '标准', ver: '版本',
-      t1: '视场角分析', t2: '部署模板', t3: '数据矩阵', t4: '并排对比',
+      t1: '视场角分析', t2: '部署模板', t3: '数据矩阵', t4: '并排对比', t5: 'CAD图例',
       secMeta1: '侧视图 \u00B7 传感器 / 高度 / 俯角可调',
       secMeta2: '11 个预设 \u00B7 点击加载',
       secMeta3: '数据 \u00B7 传感器切换重算',
       secMeta4: 'A / B 差值 \u00B7 支持跨传感器对比',
+      cadTitle: 'CAD 平面动态块',
+      cadMeta: 'AutoCAD DWG \u00B7 可调参数',
+      cadIntro: '基于本工具计算数据，生成的 AutoCAD 摄像机覆盖范围平面图动态块。可直接插入 CAD 方案图纸，支持调整焦距、像素、传感器、安装高度等参数。',
+      cadF1Title: '动态块', cadF1Desc: 'AutoCAD 参数化动态块，支持夹点调整视场范围和覆盖距离',
+      cadF2Title: 'DORI 分层', cadF2Desc: '平面图按 DORI 四级标准分色显示，I/R/O/D 一目了然',
+      cadF3Title: '批量输出', cadF3Desc: '预生成 15 种配置（4焦距\u00D73像素\u00D71传感器）的 DXF 文件',
+      cadFilesTitle: '文件清单', cadGithubText: 'GitHub 查看',
+      cadFd1: '参数化动态块，支持夹点调整', cadFd2: '实际项目应用示例', cadFd3: '15 个预生成 DXF 文件',
+      cadDxfTitle: '预生成 DXF 文件',
       t1Label: '焦距', t2Label: '像素', t3Label: '距离',
       hFovLabel: '水平', vFovLabel: '垂直',
       focal: '焦距', pixel: '像素', dispDist: '显示距离 (m)', ht: '高度 (m)', tilt: '俯角',
@@ -994,11 +1240,20 @@
     en: {
       sub: 'Camera Selection Reference \u00B7 Focal / Pixel / Sensor / Distance',
       sensor: 'Sensor', mountH: 'Height', std: 'Standard', ver: 'Version',
-      t1: 'FOV Analysis', t2: 'Deployment', t3: 'Data Matrix', t4: 'Comparison',
+      t1: 'FOV Analysis', t2: 'Deployment', t3: 'Data Matrix', t4: 'Comparison', t5: 'CAD Block',
       secMeta1: 'Side View \u00B7 Sensor / Height / Tilt Adjustable',
       secMeta2: '11 Presets \u00B7 Click to Load',
       secMeta3: 'Data \u00B7 Switch sensor to recalculate',
       secMeta4: 'A / B Delta \u00B7 Cross-sensor comparison',
+      cadTitle: 'CAD Plan Block',
+      cadMeta: 'AutoCAD DWG \u00B7 Adjustable Params',
+      cadIntro: 'AutoCAD camera coverage plan block generated from this tool\'s data. Insert directly into CAD drawings with adjustable focal length, pixel, sensor, and mounting height.',
+      cadF1Title: 'Dynamic Block', cadF1Desc: 'Parametric AutoCAD block with grip points for FOV and coverage adjustment',
+      cadF2Title: 'DORI Layers', cadF2Desc: 'Plan display with DORI four-level color coding (I/R/O/D)',
+      cadF3Title: 'Batch Output', cadF3Desc: '15 pre-generated DXF files (4 focal \u00D7 3 pixel \u00D7 1 sensor)',
+      cadFilesTitle: 'File List', cadGithubText: 'View on GitHub',
+      cadFd1: 'Parametric block with grip adjustment', cadFd2: 'Real project example', cadFd3: '15 pre-generated DXF files',
+      cadDxfTitle: 'Pre-generated DXF Files',
       t1Label: 'Focal', t2Label: 'Pixel', t3Label: 'Distance',
       hFovLabel: 'H', vFovLabel: 'V',
       focal: 'Focal', pixel: 'Pixel', dispDist: 'Display Dist (m)', ht: 'Height (m)', tilt: 'Tilt',
@@ -1485,6 +1740,7 @@
   populateCompare();
   renderCompare();
   renderScenarios();
+  renderCadSection();
 
   // ===== Language =====
   function renderLang() {
@@ -1496,6 +1752,7 @@
     $$('.tab')[1].innerHTML = `<span class="num">02</span>${t('t2')}`;
     $$('.tab')[2].innerHTML = `<span class="num">03</span>${t('t3')}`;
     $$('.tab')[3].innerHTML = `<span class="num">04</span>${t('t4')}`;
+    $$('.tab')[4].innerHTML = `<span class="num">05</span>${t('t5')}`;
     $$('.ctrl-label')[0].textContent = t('fSensor');
     $$('.ctrl-label')[1].textContent = t('focal');
     $$('.ctrl-label')[2].textContent = t('pixel');
@@ -1529,6 +1786,7 @@
     populateSensorSelect($('#compare-b-sensor'), state.bSensor);
     renderCompare();
     renderScenarios();
+    renderCadSection();
     renderFooter();
   }
   function renderDoriCards() {
@@ -1555,6 +1813,62 @@
   }
   function renderFooter() {
     $('footer span').textContent = t('fData');
+  }
+
+  // ===== CAD Section =====
+  function renderCadSection() {
+    $('#cad-title').textContent = t('cadTitle');
+    $('#cad-meta').textContent = t('cadMeta');
+    $('#cad-intro-text').textContent = t('cadIntro');
+    $('#cad-f1-title').textContent = t('cadF1Title');
+    $('#cad-f1-desc').textContent = t('cadF1Desc');
+    $('#cad-f2-title').textContent = t('cadF2Title');
+    $('#cad-f2-desc').textContent = t('cadF2Desc');
+    $('#cad-f3-title').textContent = t('cadF3Title');
+    $('#cad-f3-desc').textContent = t('cadF3Desc');
+    $('#cad-files-title').textContent = t('cadFilesTitle');
+    $('#cad-github-text').textContent = t('cadGithubText');
+    $('#cad-fd1').textContent = t('cadFd1');
+    $('#cad-fd2').textContent = t('cadFd2');
+    $('#cad-fd3').textContent = t('cadFd3');
+    $('#cad-dxf-title').textContent = t('cadDxfTitle');
+    renderDxfTable();
+  }
+
+  function renderDxfTable() {
+    const focals = [2.8, 4, 6, 8, 12];
+    const pixels = ['2mp', '4mp', '8mp'];
+    const baseUrl = 'https://github.com/cailleachzou/cctv-focal-distance-tool/tree/main/杂物/cctv-cad-output';
+
+    let html = `<table>
+      <thead>
+        <tr>
+          <th>${lang === 'cn' ? '焦距' : 'Focal'}</th>
+          <th>${lang === 'cn' ? '像素' : 'Pixel'}</th>
+          <th>${lang === 'cn' ? '传感器' : 'Sensor'}</th>
+          <th>${lang === 'cn' ? '文件名' : 'Filename'}</th>
+          <th>${lang === 'cn' ? '操作' : 'Action'}</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+    focals.forEach(f => {
+      pixels.forEach(p => {
+        const sensor = '1/2.8"';
+        const filename = `FOV_${f}mm_${p}_1_2.8_H3m.dxf`;
+        const fileUrl = `${baseUrl}/${encodeURIComponent(filename)}`;
+        html += `<tr>
+          <td class="dxf-focal">${f}mm</td>
+          <td class="dxf-pixel">${p.toUpperCase()}</td>
+          <td class="dxf-sensor">${sensor}</td>
+          <td>${filename}</td>
+          <td><a href="${fileUrl}" target="_blank" class="dxf-link">${lang === 'cn' ? '下载' : 'Download'} ↗</a></td>
+        </tr>`;
+      });
+    });
+
+    html += '</tbody></table>';
+    $('#cad-dxf-table').innerHTML = html;
   }
 
   $('#lang-cn').addEventListener('click', () => { lang = 'cn'; $('#lang-cn').style.color = 'var(--primary)'; $('#lang-en').style.color = 'var(--text-3)'; renderLang(); });
