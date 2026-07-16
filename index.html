@@ -888,7 +888,7 @@
           <button class="export-btn" id="export-pdf" title="Export PDF">PDF</button>
         </div>
       </div>
-      <svg id="diagram" viewBox="0 0 900 160" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg id="diagram" viewBox="0 0 900 170" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
 
     <!-- ===== DORI 维度详解 ===== -->
@@ -1555,6 +1555,22 @@
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="${cssVar('--I')}" fill-opacity="0.12"/>`;
     svg += `<polygon points="${camX},${groundY} ${blindX},${groundY} ${camX},${camYM}" fill="url(#hatch)"/>`;
     svg += `<text x="${(camX + blindX) / 2}" y="${(camYM + groundY) / 2 + 4}" fill="${cssVar('--I')}" font-size="9" text-anchor="middle" font-weight="600" font-family="IBM Plex Mono" letter-spacing="1">${t('blindZ')}</text>`;
+
+    // ===== 1.75m 人体比例参照 =====
+    const personH = 1.75 * unit;
+    const personX = camX - 40;
+    const pHeadY = groundY - personH;
+    const pNeckY = pHeadY + personH * 0.12;
+    const pShoulderY = pHeadY + personH * 0.22;
+    const pHipY = groundY - personH * 0.47;
+    const pArm = personH * 0.18;
+    const pLeg = personH * 0.28;
+    svg += `<circle cx="${personX}" cy="${pHeadY + personH * 0.065}" r="${personH * 0.065}" fill="none" stroke="${cssVar('--svg-primary')}" stroke-width="1.2"/>`;
+    svg += `<line x1="${personX}" y1="${pNeckY}" x2="${personX}" y2="${pHipY}" stroke="${cssVar('--svg-primary')}" stroke-width="1.2" stroke-linecap="round"/>`;
+    svg += `<line x1="${personX - pArm}" y1="${pShoulderY}" x2="${personX + pArm}" y2="${pShoulderY}" stroke="${cssVar('--svg-primary')}" stroke-width="1.2" stroke-linecap="round"/>`;
+    svg += `<line x1="${personX}" y1="${pHipY}" x2="${personX - pLeg * 0.55}" y2="${groundY}" stroke="${cssVar('--svg-primary')}" stroke-width="1.2" stroke-linecap="round"/>`;
+    svg += `<line x1="${personX}" y1="${pHipY}" x2="${personX + pLeg * 0.55}" y2="${groundY}" stroke="${cssVar('--svg-primary')}" stroke-width="1.2" stroke-linecap="round"/>`;
+    svg += `<text x="${personX}" y="${groundY + 11}" fill="${cssVar('--svg-primary')}" font-size="8" text-anchor="middle" font-family="IBM Plex Mono" letter-spacing=".5">1.75m</text>`;
 
     const cX = camX + edgeLen * Math.cos(tiltRad);
     const cY = camYM + edgeLen * Math.sin(tiltRad);
