@@ -41,6 +41,17 @@ jobs:
           cp -r backup/.gitignore backup/index.html backup/LICENSE backup/README.md _site/pre-20260629/ 2>/dev/null || true
           cp -r "backup/焦距像素距离对照表.md" _site/pre-20260629/ 2>/dev/null || true
 
+      - name: Checkout stick-figure branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/stick-figure
+          path: stick-figure
+
+      - name: Copy stick-figure to subfolder
+        run: |
+          mkdir -p _site/stick-figure
+          cp -r stick-figure/index.html stick-figure/stick-figure-preview.html _site/stick-figure/ 2>/dev/null || true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
